@@ -1,0 +1,56 @@
+package com.vadimistar.tasktrackerbackend.controller;
+
+import com.vadimistar.tasktrackerbackend.dto.AuthorizeUserDto;
+import com.vadimistar.tasktrackerbackend.dto.CurrentUserDto;
+import com.vadimistar.tasktrackerbackend.dto.RegisterUserDto;
+import com.vadimistar.tasktrackerbackend.dto.JwtTokenDto;
+import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping("/user")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDto registerUserDto,
+                                          HttpServletResponse response) {
+        JwtTokenDto jwtTokenDto = userService.registerUser(registerUserDto);
+        setTokenCookie(jwtTokenDto, response);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user")
+    public CurrentUserDto getCurrentUser(@AuthenticationPrincipal User user) {
+        return userService.getCurrentUser(user);
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<?> authorizeUser(@Valid @RequestBody AuthorizeUserDto authorizeUserDto,
+                                                HttpServletResponse response) {
+        JwtTokenDto jwtTokenDto = userService.authorizeUser(authorizeUserDto);
+        setTokenCookie(jwtTokenDto, response);
+        return ResponseEntity.ok().build();
+    }
+
+    private static void setTokenCookie(JwtTokenDto jwtTokenDto, HttpServletResponse response) {
+        ResponseCookie responseCookie = ResponseCookie
+                .from("authToken", jwtTokenDto.getToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(jwtTokenDto.getExpiresIn())
+                .build();
+        response.addHeader("Set-Cookie", responseCookie.toString());
+    }
+}
