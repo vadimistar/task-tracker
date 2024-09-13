@@ -4,6 +4,7 @@ import com.vadimistar.tasktrackerbackend.service.JwtService;
 import com.vadimistar.tasktrackerbackend.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -51,14 +53,13 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> parseJwt(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
-            return Optional.of(authHeader.substring(BEARER_PREFIX.length()));
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
         }
-
-        return Optional.empty();
+        Optional<Cookie> authTokenCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("authToken"))
+                .findFirst();
+        return authTokenCookie.map(Cookie::getValue);
     }
-
-    private static final String BEARER_PREFIX = "Bearer ";
 }
