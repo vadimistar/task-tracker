@@ -15,6 +15,6 @@ public class RegisterUserDto {
     private String email;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 5, message = "Password must have at least 5 symbols")
+    @Size(min = 5, message = "Password must be at least 5 characters")
     private String password;
 }

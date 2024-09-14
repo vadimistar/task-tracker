@@ -1,10 +1,10 @@
 package com.vadimistar.tasktrackerbackend.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class ErrorDto {
 
     private String message;

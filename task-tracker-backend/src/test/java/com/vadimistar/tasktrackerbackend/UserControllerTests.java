@@ -3,6 +3,8 @@ package com.vadimistar.tasktrackerbackend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vadimistar.tasktrackerbackend.dto.ErrorDto;
 import com.vadimistar.tasktrackerbackend.dto.RegisterUserDto;
+import com.vadimistar.tasktrackerbackend.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +33,9 @@ public class UserControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0");
 
@@ -40,6 +45,11 @@ public class UserControllerTests {
         registry.add("spring.datasource.username", mysqlContainer::getUsername);
         registry.add("spring.datasource.password", mysqlContainer::getPassword);
         registry.add("spring.datasource.driver-class-name", mysqlContainer::getDriverClassName);
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        userRepository.deleteAll();
     }
 
     @Test
@@ -58,19 +68,72 @@ public class UserControllerTests {
 
     @Test
     void registerUser_invalidEmail_returnsInvalidEmailError() throws Exception {
-//        RegisterUserDto registerUserDto = RegisterUserDto.builder()
-//                .email("admin")
-//                .password("admin")
-//                .build();
-//        String requestBody = objectMapper.writeValueAsString(registerUserDto);
-//
-//        ErrorDto errorDto = ErrorDto.builder().message("Invalid email").build();
-//        String responseBody = objectMapper.writeValueAsString(errorDto);
-//
-//        mockMvc.perform(post("/user")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(requestBody))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().json(responseBody));
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin")
+                .password("admin")
+                .build();
+        String requestBody = objectMapper.writeValueAsString(registerUserDto);
+
+        ErrorDto errorDto = new ErrorDto("Email is invalid");
+        String responseBody = objectMapper.writeValueAsString(errorDto);
+
+        mockMvc.perform(post("/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(responseBody));
+    }
+
+    @Test
+    void registerUser_emailAlreadyExists_returnsEmailExistsError() throws Exception {
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+        String requestBody = objectMapper.writeValueAsString(registerUserDto);
+
+        mockMvc.perform(post("/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk());
+
+        ErrorDto errorDto = new ErrorDto("User with this email already exists");
+        String responseBody = objectMapper.writeValueAsString(errorDto);
+
+        mockMvc.perform(post("/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(content().json(responseBody));
+    }
+
+    @Test
+    void registerUser_passwordTooSmall_returnsPasswordTooSmallError() throws Exception {
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("1")
+                .build();
+        String requestBody = objectMapper.writeValueAsString(registerUserDto);
+
+        ErrorDto errorDto = new ErrorDto("Password must be at least 5 characters");
+        String responseBody = objectMapper.writeValueAsString(errorDto);
+
+        mockMvc.perform(post("/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(responseBody));
+    }
+
+    @Test
+    void invalidRequestDto_returnsInvalidRequestFormatError() throws Exception {
+        ErrorDto errorDto = new ErrorDto("Invalid request format");
+        String responseBody = objectMapper.writeValueAsString(errorDto);
+
+        mockMvc.perform(post("/user")
+                        .contentType(MediaType.APPLICATION_ATOM_XML)
+                        .content("bad content"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(responseBody));
     }
 }

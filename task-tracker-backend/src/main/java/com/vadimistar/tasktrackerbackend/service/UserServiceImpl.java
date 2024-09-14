@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public JwtTokenDto registerUser(RegisterUserDto registerUserDto) {
         if (userRepository.existsByEmail(registerUserDto.getEmail())) {
-            throw new UserAlreadyExistsException("User with this email already exists: " + registerUserDto.getEmail());
+            throw new UserAlreadyExistsException("User with this email already exists");
         }
 
         User user = userMapper.mapRegisterUserDtoToUser(registerUserDto);
