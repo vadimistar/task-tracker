@@ -1,9 +1,10 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vadimistar.tasktrackerbackend.dto.ErrorDto;
-import com.vadimistar.tasktrackerbackend.dto.RegisterUserDto;
+import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
+import com.vadimistar.tasktrackerbackend.service.UserService;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,6 +34,9 @@ public class UserControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -58,7 +63,8 @@ public class UserControllerTests {
                         .email("admin@admin.com")
                         .password("admin")
                         .build();
-        byte[] requestBody = objectMapper.writeValueAsBytes(registerUserDto);
+        String requestBody = objectMapper.writeValueAsString(registerUserDto);
+
         mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -122,6 +128,71 @@ public class UserControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().json(responseBody));
+    }
+
+    @Test
+    void authorizeUser_success() throws Exception {
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+        userService.registerUser(registerUserDto);
+
+        AuthorizeUserDto authorizeUserDto = AuthorizeUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+        String requestBody = objectMapper.writeValueAsString(authorizeUserDto);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(cookie().exists("authToken"));
+    }
+
+    @Test
+    void authorizeUser_invalidCredentials_returnsInvalidCredentialsError() throws Exception {
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+        userService.registerUser(registerUserDto);
+
+        AuthorizeUserDto authorizeUserDto = AuthorizeUserDto.builder()
+                .email("admin@admin.com")
+                .password("123123")
+                .build();
+        String requestBody = objectMapper.writeValueAsString(authorizeUserDto);
+
+        ErrorDto errorDto = new ErrorDto("Bad credentials");
+        String responseBody = objectMapper.writeValueAsString(errorDto);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(responseBody));
+    }
+
+    @Test
+    void getCurrentUser_registerAndGetCurrentUser_success() throws Exception {
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+        JwtTokenDto jwtTokenDto = userService.registerUser(registerUserDto);
+
+        CurrentUserDto currentUserDto = CurrentUserDto.builder()
+                .id(1L)
+                .email("admin@admin.com")
+                .build();
+        String responseBody = objectMapper.writeValueAsString(currentUserDto);
+
+        mockMvc.perform(get("/user")
+                        .cookie(new Cookie("authToken", jwtTokenDto.getToken())))
+                .andExpect(status().isOk())
                 .andExpect(content().json(responseBody));
     }
 
