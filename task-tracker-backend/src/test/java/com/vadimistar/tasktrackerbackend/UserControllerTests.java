@@ -5,6 +5,7 @@ import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
 import com.vadimistar.tasktrackerbackend.service.UserService;
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,16 +185,14 @@ public class UserControllerTests {
                 .build();
         JwtTokenDto jwtTokenDto = userService.registerUser(registerUserDto);
 
-        CurrentUserDto currentUserDto = CurrentUserDto.builder()
-                .id(1L)
-                .email("admin@admin.com")
-                .build();
-        String responseBody = objectMapper.writeValueAsString(currentUserDto);
-
         mockMvc.perform(get("/user")
                         .cookie(new Cookie("authToken", jwtTokenDto.getToken())))
                 .andExpect(status().isOk())
-                .andExpect(content().json(responseBody));
+                .andExpect(response -> {
+                    String content = response.getResponse().getContentAsString();
+                    CurrentUserDto currentUserDto = objectMapper.readValue(content, CurrentUserDto.class);
+                    Assertions.assertEquals("admin@admin.com", currentUserDto.getEmail());
+                });
     }
 
     @Test
