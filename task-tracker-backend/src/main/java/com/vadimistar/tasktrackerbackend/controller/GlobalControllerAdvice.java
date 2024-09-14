@@ -42,7 +42,13 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDto> handleBadCredentialsException(BadCredentialsException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDto);
+        return ResponseEntity.badRequest().body(errorDto);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleException(Exception ex) {
+        ErrorDto errorDto = new ErrorDto("Internal server error");
+        return ResponseEntity.internalServerError().body(errorDto);
     }
 
 }
