@@ -3,9 +3,11 @@ package com.vadimistar.tasktrackerbackend.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vadimistar.tasktrackerbackend.validation.NullOrNotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class UpdateTaskDto {
 
     @NotNull(message = "Task id must be specified")

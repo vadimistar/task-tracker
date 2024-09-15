@@ -2,10 +2,7 @@ package com.vadimistar.tasktrackerbackend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +17,8 @@ import java.util.List;
 })
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class User implements UserDetails {
 
@@ -33,6 +32,7 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
+    @Builder.Default
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();
 
