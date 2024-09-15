@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
-    @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();
 
     @Override
