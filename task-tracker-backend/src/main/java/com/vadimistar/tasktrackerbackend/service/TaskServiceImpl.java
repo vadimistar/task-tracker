@@ -66,6 +66,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public void deleteTask(User user, DeleteTaskDto taskDto) {
-        taskRepository.deleteByIdAndOwnerId(taskDto.getId(), user.getId());
+        if (!taskRepository.existsByIdAndOwnerId(taskDto.getId(), user.getId())) {
+            throw new TaskNotFoundException("Task with this id is not found");
+        }
+        taskRepository.deleteById(taskDto.getId());
     }
 }

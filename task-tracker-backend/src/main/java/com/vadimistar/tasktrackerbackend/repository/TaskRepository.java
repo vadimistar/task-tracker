@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     Optional<Task> findByIdAndOwnerId(long id, long ownerId);
-    void deleteByIdAndOwnerId(long id, long ownerId);
+    boolean existsByIdAndOwnerId(long id, long ownerId);
 }
