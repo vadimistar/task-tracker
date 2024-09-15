@@ -2,6 +2,7 @@ package com.vadimistar.tasktrackerbackend.controller;
 
 import com.vadimistar.tasktrackerbackend.dto.ErrorDto;
 import com.vadimistar.tasktrackerbackend.exception.UserAlreadyExistsException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Log4j2
 public class GlobalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -29,6 +33,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class, HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorDto> handleInvalidRequestFormatExceptions(Exception e) {
+        log.error("Invalid request format: {}", e.getMessage());
         ErrorDto errorDto = new ErrorDto("Invalid request format");
         return ResponseEntity.badRequest().body(errorDto);
     }
@@ -47,8 +52,15 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception ex) {
+        String stackTrace = Arrays.stream(ex.getStackTrace())
+                .limit(MAX_STACK_TRACE_SIZE)
+                .map(StackTraceElement::toString)
+                .collect(Collectors.joining("\n"));
+        log.error("Exception occurred {}: {}\nStack trace:\n{}",
+                ex.getClass().toString(), ex.getMessage(), stackTrace);
         ErrorDto errorDto = new ErrorDto("Internal server error");
         return ResponseEntity.internalServerError().body(errorDto);
     }
 
+    private static final int MAX_STACK_TRACE_SIZE = 10;
 }
