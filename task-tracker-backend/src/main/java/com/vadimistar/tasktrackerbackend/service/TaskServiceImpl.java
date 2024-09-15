@@ -49,13 +49,14 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto updateTask(User user, UpdateTaskDto taskDto) {
         Task task = taskRepository.findByIdAndOwnerId(taskDto.getId(), user.getId())
                 .orElseThrow(() -> new TaskNotFoundException("Task with this id is not found"));
-        boolean isJustCompleted = !task.getIsCompleted() && taskDto.getIsCompleted();
+        boolean isJustCompleted = !task.getIsCompleted() &&
+                (taskDto.getIsCompleted() != null && taskDto.getIsCompleted());
         taskMapper.mapUpdateTaskDtoToTask(taskDto, task);
         task.setTitle(task.getTitle().trim());
         if (isJustCompleted) {
             task.setCompletedAt(LocalDateTime.now());
         }
-        if (!taskDto.getIsCompleted()) {
+        if (taskDto.getIsCompleted() != null && !taskDto.getIsCompleted()) {
             task.setCompletedAt(null);
         }
         taskRepository.saveAndFlush(task);
