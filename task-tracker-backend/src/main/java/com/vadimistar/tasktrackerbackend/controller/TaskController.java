@@ -4,7 +4,7 @@ import com.vadimistar.tasktrackerbackend.dto.CreateTaskDto;
 import com.vadimistar.tasktrackerbackend.dto.TaskDto;
 import com.vadimistar.tasktrackerbackend.dto.UpdateTaskDto;
 import com.vadimistar.tasktrackerbackend.entity.User;
-import com.vadimistar.tasktrackerbackend.service.DeleteTaskDto;
+import com.vadimistar.tasktrackerbackend.dto.DeleteTaskDto;
 import com.vadimistar.tasktrackerbackend.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

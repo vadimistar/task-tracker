@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.service;
+package com.vadimistar.tasktrackerbackend.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
