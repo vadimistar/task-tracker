@@ -27,6 +27,5 @@ public class Task {
     @NotNull
     private Boolean isCompleted;
 
-    @NotNull
     private LocalDateTime completedAt;
 }
