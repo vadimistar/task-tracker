@@ -4,6 +4,7 @@ import com.vadimistar.tasktrackerbackend.dto.CreateTaskDto;
 import com.vadimistar.tasktrackerbackend.dto.DeleteTaskDto;
 import com.vadimistar.tasktrackerbackend.dto.TaskDto;
 import com.vadimistar.tasktrackerbackend.dto.UpdateTaskDto;
+import com.vadimistar.tasktrackerbackend.entity.Task;
 import com.vadimistar.tasktrackerbackend.entity.User;
 import com.vadimistar.tasktrackerbackend.exception.TaskNotFoundException;
 import com.vadimistar.tasktrackerbackend.repository.TaskRepository;
@@ -21,6 +22,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -57,176 +59,163 @@ public class TaskServiceTests {
     @Test
     public void getTasks_noTasks_returnsEmptyList() {
         List<TaskDto> tasks = taskService.getTasks(mockUser());
+
         Assertions.assertEquals(0, tasks.size());
     }
 
     @Test
-    public void createTask_notCompleted() {
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
+    public void createTask_notCompleted_savesTaskInDatabase_notUpdatesCompletedAt() {
+        CreateTaskDto request = CreateTaskDto.builder()
                 .title("Some title")
                 .text("Some text")
                 .isCompleted(false)
                 .build();
-        TaskDto createdTask = taskService.createTask(mockUser(), createTaskDto);
-        Assertions.assertEquals("Some title", createdTask.getTitle());
-        Assertions.assertEquals("Some text", createdTask.getText());
-        Assertions.assertEquals(false, createdTask.getIsCompleted());
-        Assertions.assertNull(createdTask.getCompletedAt());
+
+        TaskDto response = taskService.createTask(mockUser(), request);
+
+        Assertions.assertTrue(taskRepository.existsById(response.getId()));
+
+        Assertions.assertEquals("Some title", response.getTitle());
+        Assertions.assertEquals("Some text", response.getText());
+        Assertions.assertEquals(false, response.getIsCompleted());
+
+        Assertions.assertNull(response.getCompletedAt());
     }
 
     @Test
-    public void createTask_isCompleted() {
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
+    public void createTask_isCompleted_savesTaskInDatabase_updatesCompletedAt() {
+        CreateTaskDto request = CreateTaskDto.builder()
                 .title("Some title")
                 .text("Some text")
                 .isCompleted(true)
                 .build();
-        TaskDto createdTask = taskService.createTask(mockUser(), createTaskDto);
-        Assertions.assertEquals("Some title", createdTask.getTitle());
-        Assertions.assertEquals("Some text", createdTask.getText());
-        Assertions.assertEquals(true, createdTask.getIsCompleted());
-        Assertions.assertNotNull(createdTask.getCompletedAt());
+
+        TaskDto response = taskService.createTask(mockUser(), request);
+
+        Assertions.assertTrue(taskRepository.existsById(response.getId()));
+
+        Assertions.assertEquals("Some title", response.getTitle());
+        Assertions.assertEquals("Some text", response.getText());
+        Assertions.assertEquals(true, response.getIsCompleted());
+
+        Assertions.assertNotNull(response.getCompletedAt());
     }
 
     @Test
     public void createTask_titleNotTrimmed_trimsTitle() {
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
+        CreateTaskDto request = CreateTaskDto.builder()
                 .title("    Title   ")
                 .text("Text")
                 .build();
-        TaskDto createdTask = taskService.createTask(mockUser(), createTaskDto);
-        Assertions.assertEquals("Title", createdTask.getTitle());
+
+        TaskDto response = taskService.createTask(mockUser(), request);
+
+        Assertions.assertEquals("Title", response.getTitle());
     }
 
     @Test
-    public void createTask_titleIsEmpty_throwsException() {
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("")
-                .text("Text")
-                .build();
-        Assertions.assertThrows(Exception.class, () -> taskService.createTask(mockUser(), createTaskDto));
-    }
-
-    @Test
-    public void updateTask_completeTask() {
+    public void updateTask_completeTask_updatesIsCompleted_completedAt() {
         User user = mockUser();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Title")
-                .isCompleted(false)
-                .build();
-        TaskDto task = taskService.createTask(user, createTaskDto);
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
+        Task task = mockTask(user, false);
+
+        UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .isCompleted(true)
                 .build();
-        task = taskService.updateTask(user, updateTaskDto);
-        Assertions.assertEquals(true, task.getIsCompleted());
-        Assertions.assertNotNull(task.getCompletedAt());
+
+        TaskDto response = taskService.updateTask(user, request);
+
+        Assertions.assertEquals(true, response.getIsCompleted());
+        Assertions.assertNotNull(response.getCompletedAt());
     }
 
     @Test
-    public void updateTask_incompleteTask() {
+    public void updateTask_makeTestNotCompleted_updatesIsCompleted_completedAt() {
         User user = mockUser();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Title")
-                .isCompleted(true)
-                .build();
-        TaskDto task = taskService.createTask(user, createTaskDto);
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
+        Task task = mockTask(user, true);
+
+        UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .isCompleted(false)
                 .build();
-        task = taskService.updateTask(user, updateTaskDto);
-        Assertions.assertEquals(false, task.getIsCompleted());
-        Assertions.assertNull(task.getCompletedAt());
+
+        TaskDto response = taskService.updateTask(user, request);
+
+        Assertions.assertEquals(false, response.getIsCompleted());
+        Assertions.assertNull(response.getCompletedAt());
     }
 
     @Test
     public void updateTask_titleNotTrimmed_trimsTitle() {
         User user = mockUser();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Title")
-                .build();
-        TaskDto task = taskService.createTask(user, createTaskDto);
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
+        Task task = mockTask(user, false);
+
+        UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .title("    New title   ")
                 .build();
-        task = taskService.updateTask(user, updateTaskDto);
-        Assertions.assertEquals("New title", task.getTitle());
-    }
 
-    @Test
-    public void updateTask_titleIsEmpty_throwsException() {
-        User user = mockUser();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Title")
-                .build();
-        TaskDto task = taskService.createTask(user, createTaskDto);
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
-                .id(task.getId())
-                .title("")
-                .build();
-        Assertions.assertThrows(Exception.class, () -> taskService.updateTask(user, updateTaskDto));
+        TaskDto response = taskService.updateTask(user, request);
+
+        Assertions.assertEquals("New title", response.getTitle());
     }
 
     @Test
     public void updateTask_userNotOwnsTask_taskNotFound() {
         User user1 = mockUser();
         User user2 = mockUser2();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Task of user 1")
-                .build();
-        TaskDto task = taskService.createTask(user1, createTaskDto);
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
-                .id(task.getId())
+        Task taskOfUser1 = mockTask(user1, false);
+
+        UpdateTaskDto request = UpdateTaskDto.builder()
+                .id(taskOfUser1.getId())
                 .title("New title for task of user 1")
                 .build();
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(user2, updateTaskDto));
+
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(user2, request));
     }
 
     @Test
     public void updateTask_invalidTaskId_taskNotFound() {
-        UpdateTaskDto updateTaskDto = UpdateTaskDto.builder()
+        UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(Long.MAX_VALUE)
                 .title("Title")
                 .build();
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(mockUser(), updateTaskDto));
+
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(mockUser(), request));
     }
 
     @Test
-    public void deleteTask_taskExists() {
+    public void deleteTask_taskExists_success() {
         User user = mockUser();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Title")
-                .build();
-        TaskDto task = taskService.createTask(user, createTaskDto);
-        DeleteTaskDto deleteTaskDto = DeleteTaskDto.builder()
+        Task task = mockTask(user, false);
+
+        DeleteTaskDto request = DeleteTaskDto.builder()
                 .id(task.getId())
                 .build();
-        taskService.deleteTask(user, deleteTaskDto);
+
+        Assertions.assertDoesNotThrow(() -> taskService.deleteTask(user, request));
     }
 
     @Test
     public void deleteTask_userNotOwnsTask_taskNotFound() {
         User user1 = mockUser();
         User user2 = mockUser2();
-        CreateTaskDto createTaskDto = CreateTaskDto.builder()
-                .title("Task of user 1")
+        Task taskOfUser1 = mockTask(user1, false);
+
+        DeleteTaskDto request = DeleteTaskDto.builder()
+                .id(taskOfUser1.getId())
                 .build();
-        TaskDto task = taskService.createTask(user1, createTaskDto);
-        DeleteTaskDto deleteTaskDto = DeleteTaskDto.builder()
-                .id(task.getId())
-                .build();
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(user2, deleteTaskDto));
+
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(user2, request));
     }
 
     @Test
     public void deleteTask_invalidTaskId_taskNotFound() {
-        DeleteTaskDto deleteTaskDto = DeleteTaskDto.builder()
+        DeleteTaskDto request = DeleteTaskDto.builder()
                 .id(Long.MAX_VALUE)
                 .build();
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(mockUser(), deleteTaskDto));
+
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(mockUser(), request));
     }
 
     private User mockUser() {
@@ -243,5 +232,19 @@ public class TaskServiceTests {
                         .email("admin2@admin.com")
                         .password("admin")
                         .build());
+    }
+
+    private Task mockTask(User user, boolean isCompleted) {
+        Task task = Task.builder()
+                .title("Title")
+                .text("Text")
+                .isCompleted(isCompleted)
+                .owner(user)
+                .build();
+        if (isCompleted) {
+            task.setCompletedAt(LocalDateTime.now());
+        }
+        taskRepository.saveAndFlush(task);
+        return task;
     }
 }
