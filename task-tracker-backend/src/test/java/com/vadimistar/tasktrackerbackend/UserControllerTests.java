@@ -109,6 +109,12 @@ public class UserControllerTests {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void getCurrentUser_notAuthorized_returns401() throws Exception {
+        mockMvc.perform(get("/user"))
+                .andExpect(status().isUnauthorized());
+    }
+
     private JwtTokenDto mockJwtTokenDto() {
         return JwtTokenDto.builder()
                 .token("TOKEN")
