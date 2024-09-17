@@ -1,0 +1,41 @@
+input {
+    background-color: #343744 !important;
+    color: white !important;
+}
+
+@media (min-width: 1200px) {
+    .container {
+        width: 970px;
+    }
+}
+
+.form-control {
+    border: 0;
+}
+
+.form-control:focus {
+    border-color: #323c48;
+    box-shadow: 0 0 0 0.2rem rgb(50, 60, 72);
+}
+
+.task-list {
+    background-color: #343744;
+    border-radius: 3px;
+    color: #e0e0e0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.task {
+    background-color: #3e4154;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.task-text {
+    font-weight: bold;
+    margin: 10px;
+    color: #e3e3e3;
+}
