@@ -16,12 +16,16 @@
                 <div>
                     <ul class="navbar-nav gap-3">
                         <li class="nav-item" id="login">
-                            <a href="/login" type="button" class="btn btn-outline-secondary">Login</a>
+                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                Login
+                            </a>
                         </li>
                         <li class="nav-item" id="register">
-                            <a href="/register" type="button" class="btn btn-primary">Register</a>
+                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Register
+                            </a>
                         </li>
-                        <li class="my-auto" id="email">
+                        <li class="my-auto" id="user-email">
                             <p class="my-auto fw-bold" id="email-text">Name</p>
                         </li>
                         <li class="nav-item" id="log-out">
@@ -50,7 +54,9 @@
                         To do
                     </div>
                     <div class="list-group">
-                        <a type="button" class="list-group-item list-group-item-action" href="/">Task 1</a>
+                        <a type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#taskModal">
+                            Task 1
+                        </a>
                     </div>
                 </div>
             </div>
@@ -61,6 +67,95 @@
                     </div>
                     <div class="list-group">
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="loginModalLabel">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="form-group mt-3">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label>Password</label>
+                            <input type="text" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="registerModalLabel">Register</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="form-group mt-3">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label>Password</label>
+                            <input type="text" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label>Confirm password</label>
+                            <input type="text" class="form-control" name="confirmPassword" placeholder="Confirm password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="taskModalLabel">Task</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" placeholder="">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <textarea class="form-control" name="text" placeholder="" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label">
+                            Done
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
         </div>
