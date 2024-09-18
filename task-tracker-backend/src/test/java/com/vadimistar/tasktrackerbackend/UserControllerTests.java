@@ -58,7 +58,7 @@ public class UserControllerTests {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/api/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
@@ -76,7 +76,7 @@ public class UserControllerTests {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
@@ -104,14 +104,14 @@ public class UserControllerTests {
         when(jwtService.isTokenValid("TOKEN")).thenReturn(true);
         when(jwtService.getEmailFromToken("TOKEN")).thenReturn(user.getEmail());
 
-        mockMvc.perform(get("/user")
+        mockMvc.perform(get("/api/user")
                         .cookie(new Cookie("authToken", "TOKEN")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getCurrentUser_notAuthorized_returns401() throws Exception {
-        mockMvc.perform(get("/user"))
+        mockMvc.perform(get("/api/user"))
                 .andExpect(status().isUnauthorized());
     }
 
