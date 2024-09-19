@@ -10,7 +10,7 @@ $(function() {
     }
 
     function validateSuccess(error, element) {
-        element.nextSibling.remove();
+        $(element).next().remove();
     }
 
     $("#loginForm").validate({
