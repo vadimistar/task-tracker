@@ -13,7 +13,70 @@ $(function() {
         $(element).next().remove();
     }
 
-    $("#loginForm").validate({
+    function setNavbarToAuthorized() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/user',
+            xhrFields: {
+                withCredentials: true,
+            },
+            success: function(data) {
+                $('#email-text').text(data.email);
+            },
+            error: function(xhr) {
+                console.log('Cannot get user data (status ' + xhr.status + ')');
+            },
+        });
+
+        $('#login-button').attr('hidden', true);
+        $('#register-button').attr('hidden', true);
+        $('#user-email').removeAttr('hidden');
+        $('#log-out-button').removeAttr('hidden');
+    }
+
+    function fetchTasks() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/api/tasks',
+            xhrFields: {
+                withCredentials: true,
+            },
+            success: function(data) {
+                function createTaskDiv() {
+                    return $([
+                        '<a type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#taskModal">',
+                        '</a>',
+                    ].join(""));
+                }
+
+                let doneTasks = $("#done-tasks");
+                let toDoTasks = $("#to-do-tasks");
+
+                doneTasks.empty();
+                toDoTasks.empty();
+
+                data.forEach(task => {
+                    let div = createTaskDiv();
+                    div.text(task.title);
+                    if (task.isCompleted) {
+                        doneTasks.append(div);
+                    } else {
+                        toDoTasks.append(div);
+                    }
+                });
+            },
+            error: function (xhr) {
+                console.log('Cannot get user tasks (status ' + xhr.status + ')');
+            },
+        });
+
+        $('#tasks-container').removeAttr('hidden');
+    }
+
+    let loginForm = $("#loginForm");
+    let registerForm = $("#registerForm");
+
+    loginForm.validate({
         rules: {
             email: {
                 required: true,
@@ -31,7 +94,38 @@ $(function() {
         success: validateSuccess,
     });
 
-    $("#registerForm").validate({
+    loginForm.submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/auth/login',
+            xhrFields: {
+                withCredentials: true,
+            },
+            data: $(this).serialize(),
+            success: function() {
+                $('#loginModal').modal('hide');
+                setNavbarToAuthorized();
+                fetchTasks();
+            },
+            error: function(xhr) {
+                let error = $("#loginError");
+                error.removeAttr('hidden');
+                let errorText = error.find("div.alert");
+                switch (xhr.status) {
+                    case 400:
+                        errorText.text("Invalid email or password");
+                        break;
+                    default:
+                        let data = JSON.parse(xhr.responseText);
+                        errorText.text(data.message);
+                        break;
+                }
+            },
+        });
+    });
+
+    registerForm.validate({
         rules: {
             email: {
                 required: true,
@@ -59,6 +153,30 @@ $(function() {
         },
         errorPlacement: validateErrorPlacement,
         success: validateSuccess,
+    });
+
+    registerForm.on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/user',
+            data: $(this).serialize(),
+            xhrFields: {
+                withCredentials: true,
+            },
+            success: function() {
+                $('#registerModal').modal('hide');
+                setNavbarToAuthorized();
+                fetchTasks();
+            },
+            error: function(xhr) {
+                let error = $("#registerError");
+                error.removeAttr('hidden');
+                let errorText = error.find("div.alert");
+                let data = JSON.parse(xhr.responseText);
+                errorText.text(data.message);
+            }
+        });
     });
 
 });

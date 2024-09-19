@@ -58,9 +58,9 @@
                     <div class="card-header h4">
                         To do
                     </div>
-                    <div class="list-group">
+                    <div class="list-group" id="to-do-tasks">
                         <a type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#taskModal">
-                            Task 1
+                            Task
                         </a>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="card-header h4">
                         Done
                     </div>
-                    <div class="list-group">
+                    <div class="list-group" id="done-tasks">
                     </div>
                 </div>
             </div>
@@ -85,7 +85,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="loginForm">
-                    <ul id="loginErrors"></ul>
                     <div class="modal-body">
                         <div class="form-group mt-3">
                             <label>Email</label>
@@ -94,6 +93,9 @@
                         <div class="form-group mt-3">
                             <label>Password</label>
                             <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                        <div id="loginError" class="form-group mt-3" hidden>
+                            <div class="alert alert-danger mt-3"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -125,6 +127,9 @@
                         <div class="form-group mt-3">
                             <label>Confirm password</label>
                             <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm password" required>
+                        </div>
+                        <div id="registerError" class="form-group mt-3" hidden>
+                            <div class="alert alert-danger mt-3"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
