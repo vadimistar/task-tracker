@@ -2,7 +2,7 @@ $(function() {
     function validateErrorPlacement(error, element) {
         let errorDiv = $([
             '<div class="form-group mt-3">',
-            '    <div class="alert alert-danger mt-3"></div>' +
+            '    <div class="alert alert-danger mt-3"></div>',
             '</div>'
         ].join(""));
         error.appendTo(errorDiv.find("div.alert"));
