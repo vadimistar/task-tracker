@@ -22,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDto registerUserDto,
+    public ResponseEntity<?> registerUser(@Valid RegisterUserDto registerUserDto,
                                           HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = userService.registerUser(registerUserDto);
         setTokenCookie(jwtTokenDto, response);
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> authorizeUser(@Valid @RequestBody AuthorizeUserDto authorizeUserDto,
+    public ResponseEntity<?> authorizeUser(@Valid AuthorizeUserDto authorizeUserDto,
                                                 HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = userService.authorizeUser(authorizeUserDto);
         setTokenCookie(jwtTokenDto, response);
