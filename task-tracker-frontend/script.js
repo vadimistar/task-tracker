@@ -34,6 +34,13 @@ $(function() {
         $('#log-out-button').removeAttr('hidden');
     }
 
+    function setNavbarToUnauthorized() {
+        $('#login-button').removeAttr('hidden');
+        $('#register-button').removeAttr('hidden');
+        $('#user-email').attr('hidden', true);
+        $('#log-out-button').attr('hidden', true);
+    }
+
     function fetchTasks() {
         $.ajax({
             type: 'GET',
@@ -177,6 +184,20 @@ $(function() {
                 errorText.text(data.message);
             }
         });
+    });
+
+    $("#log-out-button :button").click(function() {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/auth/logout',
+            xhrFields: {
+                withCredentials: true,
+            },
+            success: function() {
+                setNavbarToUnauthorized();
+                $("#tasks-container").attr("hidden", true);
+            }
+        })
     });
 
 });

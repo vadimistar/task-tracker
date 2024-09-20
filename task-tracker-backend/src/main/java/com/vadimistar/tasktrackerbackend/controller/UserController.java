@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -39,6 +41,15 @@ public class UserController {
                                                 HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = userService.authorizeUser(authorizeUserDto);
         setTokenCookie(jwtTokenDto, response);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> logoutUser(HttpServletResponse response) {
+        setTokenCookie(JwtTokenDto.builder()
+                .token("")
+                .expiresIn(Duration.ZERO)
+                .build(), response);
         return ResponseEntity.ok().build();
     }
 
