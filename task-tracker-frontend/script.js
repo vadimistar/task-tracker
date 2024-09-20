@@ -51,7 +51,8 @@ $(function() {
             success: function(data) {
                 function createTaskDiv() {
                     return $([
-                        '<a type="button" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#taskModal">',
+                        '<a type="button" class="list-group-item list-group-item-action" ',
+                        'data-bs-toggle="modal" data-bs-target="#taskModal">',
                         '</a>',
                     ].join(""));
                 }
