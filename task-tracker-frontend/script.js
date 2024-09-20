@@ -41,6 +41,11 @@ $(function() {
         $('#log-out-button').attr('hidden', true);
     }
 
+    function formatTime(time) {
+        let date = new Date(time);
+        return date.toLocaleString('en-GB');
+    }
+
     let tasks = {};
 
     function fetchTasks() {
@@ -88,8 +93,13 @@ $(function() {
     $('#taskModal').on('show.bs.modal', function(e) {
         let task = tasks[$(e.relatedTarget).data('task-id')]
         $(e.currentTarget).find('input[name="title"]').val(task.title);
-        $(e.currentTarget).find('input[name="text"]').val(task.text);
-        $(e.currentTarget).find('input[name="done"]').prop("checked", task.isCompleted);
+        $(e.currentTarget).find('textarea[name="text"]').val(task.text);
+        $(e.currentTarget).find('input[name="is-completed"]').prop("checked", task.isCompleted);
+        if (task.completedAt != null) {
+            $("#completed-at").attr('hidden', false).text('Done at ' + formatTime(task.completedAt));
+        } else {
+            $("#completed-at").attr('hidden', true);
+        }
         $(e.currentTarget).find('button[name="delete"]')
             .off('click')
             .click(function() {
@@ -101,10 +111,75 @@ $(function() {
                     },
                     data: { id: task.id },
                     success: function() {
+                        // TODO: Replace with removing a single element
                         fetchTasks();
                     },
                     error: function(xhr) {
                         console.log('Cannot remove task (status ' + xhr.status + ')');
+                    },
+                });
+            });
+
+        $('#taskModal input[name="title"]')
+            .off('keyup')
+            .keyup($.debounce(500, function () {
+                $.ajax({
+                    type: 'PATCH',
+                    url: 'http://localhost:8080/api/task',
+                    xhrFields: {
+                        withCredentials: true,
+                    },
+                    data: { id: task.id, title: $(this).val() },
+                    success: function(data) {
+                        $("#taskModalError").attr('hidden', true);
+                        task.title = data.title;
+                        $('#to-do-tasks a[data-task-id="' + task.id + '"]').text(task.title);
+                    },
+                    error: function(xhr) {
+                        let error = $("#taskModalError");
+                        error.removeAttr('hidden');
+                        let errorText = error.find("div.alert");
+                        let data = JSON.parse(xhr.responseText);
+                        errorText.text(data.message);
+                    },
+                });
+            }));
+
+        $('#taskModal textarea[name="text"]')
+            .off('keyup')
+            .keyup($.debounce(500, function () {
+                $.ajax({
+                    type: 'PATCH',
+                    url: 'http://localhost:8080/api/task',
+                    xhrFields: {
+                        withCredentials: true,
+                    },
+                    data: { id: task.id, text: $(this).val() },
+                    success: function(data) {
+                        task.text = data.text;
+                    },
+                });
+            }));
+
+        $('#taskModal input[name="is-completed"]')
+            .off('change')
+            .change(function () {
+                $.ajax({
+                    type: 'PATCH',
+                    url: 'http://localhost:8080/api/task',
+                    xhrFields: {
+                        withCredentials: true,
+                    },
+                    data: { id: task.id, isCompleted: $(this).prop('checked') },
+                    success: function(data) {
+                        task.isCompleted = data.isCompleted;
+                        task.completedAt = data.completedAt;
+                        if (task.completedAt != null) {
+                            $("#completed-at").attr('hidden', false).text('Done at ' + formatTime(data.completedAt));
+                        } else {
+                            $("#completed-at").attr('hidden', true);
+                        }
+                        fetchTasks();
                     },
                 });
             });

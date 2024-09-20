@@ -15,8 +15,8 @@ public class CorsConfig implements CorsConfigurationSource {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:63342"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        config.setAllowedHeaders(List.of("Content-Type"));
+        config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE"));
+        config.setAllowedHeaders(List.of("Cookie", "Content-Type"));
         config.setAllowCredentials(true);
 
         return config;

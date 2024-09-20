@@ -31,7 +31,7 @@ public class TaskController {
     }
 
     @PatchMapping("/task")
-    public TaskDto updateTask(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateTaskDto taskDto) {
+    public TaskDto updateTask(@AuthenticationPrincipal User user, @Valid UpdateTaskDto taskDto) {
         return taskService.updateTask(user, taskDto);
     }
 
