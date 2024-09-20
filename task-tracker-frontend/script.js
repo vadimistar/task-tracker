@@ -142,6 +142,7 @@ $(function() {
             data: $(this).serialize(),
             success: function() {
                 $('#loginModal').modal('hide');
+                $("#loginError").attr('hidden', true);
                 setNavbarToAuthorized();
                 fetchTasks();
             },
@@ -203,6 +204,7 @@ $(function() {
             },
             success: function() {
                 $('#registerModal').modal('hide');
+                $("#registerError").attr('hidden', true);
                 setNavbarToAuthorized();
                 fetchTasks();
             },
