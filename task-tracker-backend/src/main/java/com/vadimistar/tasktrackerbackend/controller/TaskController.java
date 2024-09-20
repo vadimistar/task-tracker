@@ -36,7 +36,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/task")
-    public void deleteTask(@AuthenticationPrincipal User user, @Valid @RequestBody DeleteTaskDto taskDto) {
+    public void deleteTask(@AuthenticationPrincipal User user, @Valid DeleteTaskDto taskDto) {
         taskService.deleteTask(user, taskDto);
     }
 }

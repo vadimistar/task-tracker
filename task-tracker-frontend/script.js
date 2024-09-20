@@ -41,6 +41,8 @@ $(function() {
         $('#log-out-button').attr('hidden', true);
     }
 
+    let tasks = {};
+
     function fetchTasks() {
         $.ajax({
             type: 'GET',
@@ -66,6 +68,8 @@ $(function() {
                 data.forEach(task => {
                     let div = createTaskDiv();
                     div.text(task.title);
+                    div.attr("data-task-id", task.id);
+                    tasks[task.id] = task;
                     if (task.isCompleted) {
                         doneTasks.append(div);
                     } else {
@@ -80,6 +84,31 @@ $(function() {
 
         $('#tasks-container').removeAttr('hidden');
     }
+
+    $('#taskModal').on('show.bs.modal', function(e) {
+        let task = tasks[$(e.relatedTarget).data('task-id')]
+        $(e.currentTarget).find('input[name="title"]').val(task.title);
+        $(e.currentTarget).find('input[name="text"]').val(task.text);
+        $(e.currentTarget).find('input[name="done"]').prop("checked", task.isCompleted);
+        $(e.currentTarget).find('button[name="delete"]')
+            .off('click')
+            .click(function() {
+                $.ajax({
+                    type: 'DELETE',
+                    url: 'http://localhost:8080/api/task',
+                    xhrFields: {
+                        withCredentials: true,
+                    },
+                    data: { id: task.id },
+                    success: function() {
+                        fetchTasks();
+                    },
+                    error: function(xhr) {
+                        console.log('Cannot remove task (status ' + xhr.status + ')');
+                    },
+                });
+            });
+    });
 
     let loginForm = $("#loginForm");
     let registerForm = $("#registerForm");
