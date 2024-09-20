@@ -200,4 +200,16 @@ $(function() {
         })
     });
 
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/user',
+        xhrFields: {
+            withCredentials: true,
+        },
+        success: function() {
+            setNavbarToAuthorized();
+            fetchTasks();
+        },
+        error: function(xhr) {}
+    });
 });
