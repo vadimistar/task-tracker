@@ -155,6 +155,10 @@ $(function() {
                         errorText.text("Invalid email or password");
                         break;
                     default:
+                        if (xhr.responseText === undefined) {
+                            errorText.text('Oops! Something went wrong...');
+                            break;
+                        }
                         let data = JSON.parse(xhr.responseText);
                         errorText.text(data.message);
                         break;
@@ -212,6 +216,10 @@ $(function() {
                 let error = $("#registerError");
                 error.removeAttr('hidden');
                 let errorText = error.find("div.alert");
+                if (xhr.responseText === undefined) {
+                    errorText.text('Oops! Something went wrong...');
+                    return;
+                }
                 let data = JSON.parse(xhr.responseText);
                 errorText.text(data.message);
             }
