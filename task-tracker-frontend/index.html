@@ -44,9 +44,11 @@
     </header>
     <div class="container" id="tasks-container" hidden>
         <div class="row my-3">
-            <form class="mx-auto my-auto d-inline" action="">
+            <form class="mx-auto my-auto d-inline" id="create-task">
                 <div class="input-group">
                     <input type="text" class="form-control" name="title" placeholder="Enter a new task">
+                    <input type="text" class="form-control" name="text" hidden value="">
+                    <input type="text" class="form-control" name="isCompleted" hidden value="false">
                     <span class="input-group-append">
                         <button class="btn btn-primary" type="submit">Add</button>
                     </span>

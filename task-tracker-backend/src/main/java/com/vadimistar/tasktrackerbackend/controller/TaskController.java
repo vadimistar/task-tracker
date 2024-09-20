@@ -26,7 +26,7 @@ public class TaskController {
     }
 
     @PostMapping("/task")
-    public TaskDto createTask(@AuthenticationPrincipal User user, @Valid @RequestBody CreateTaskDto taskDto) {
+    public TaskDto createTask(@AuthenticationPrincipal User user, @Valid CreateTaskDto taskDto) {
         return taskService.createTask(user, taskDto);
     }
 

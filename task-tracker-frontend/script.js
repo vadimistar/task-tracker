@@ -315,6 +315,21 @@ $(function() {
         })
     });
 
+    $("#create-task").on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/task',
+            data: $(this).serialize(),
+            xhrFields: {
+                withCredentials: true,
+            },
+            success: function() {
+                fetchTasks();
+            },
+        });
+    })
+
     $.ajax({
         type: 'GET',
         url: 'http://localhost:8080/api/user',
