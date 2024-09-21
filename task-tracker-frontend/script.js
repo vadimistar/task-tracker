@@ -246,5 +246,11 @@ $(function() {
         });
     });
 
+    $('#theme-switcher').click(function () {
+        $('html').attr('data-bs-theme', function (index, attr) {
+            return (attr === 'light') ? 'dark' : 'light';
+        });
+    });
+
     updateUserData();
 });
