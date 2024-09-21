@@ -23,7 +23,7 @@ $(function() {
     function createTaskDiv() {
         return $(`
             <a type="button" class="list-group-item list-group-item-action" 
-            data-bs-toggle="modal" data-bs-target="#taskModal">
+            data-bs-toggle="modal" data-bs-target="#task-modal">
             </a>
         `);
     }
@@ -42,9 +42,9 @@ $(function() {
     }
 
     function updateTaskModal(task) {
-        $('#taskModal input[name="title"]').val(task.title);
-        $('#taskModal textarea[name="text"]').val(task.text);
-        $('#taskModal input[name="is-completed"]').prop("checked", task.isCompleted);
+        $('#task-modal input[name="title"]').val(task.title);
+        $('#task-modal textarea[name="text"]').val(task.text);
+        $('#task-modal input[name="is-completed"]').prop("checked", task.isCompleted);
         $("#completed-at")
             .attr('hidden', !task.completedAt)
             .text(task.completedAt ? `Done at ${formatTime(task.completedAt)}` : '');
@@ -85,7 +85,7 @@ $(function() {
         $('#tasks-container').attr('hidden', false);
     }
 
-    $('#taskModal').on('show.bs.modal', function(e) {
+    $('#task-modal').on('show.bs.modal', function(e) {
         let task = tasks[$(e.relatedTarget).data('task-id')];
 
         updateTaskModal(task);
@@ -100,7 +100,7 @@ $(function() {
             });
         });
 
-        $('#taskModal input[name="title"], #taskModal textarea[name="text"]').off('keyup').keyup(
+        $('#task-modal input[name="title"], #task-modal textarea[name="text"]').off('keyup').keyup(
             $.debounce(DEBOUNCE_TIME, function () {
                 const field = $(this).attr('name');
                 $.ajax({
@@ -113,15 +113,15 @@ $(function() {
                         if (field === 'title') {
                             $(`#to-do-tasks a[data-task-id="${task.id}"]`).text(task.title);
                         }
-                        toggleError($('#taskModalError'), false);
+                        toggleError($('#task-modal-error'), false);
                     },
                     error: function(xhr) {
-                        toggleError($('#taskModalError'), true, JSON.parse(xhr.responseText).message);
+                        toggleError($('#task-modal-error'), true, JSON.parse(xhr.responseText).message);
                     },
                 });
             }));
 
-        $('#taskModal input[name="is-completed"]').off('change').change(function () {
+        $('#task-modal input[name="is-completed"]').off('change').change(function () {
             $.ajax({
                 type: 'PATCH',
                 url: `${API_URL}/task`,
@@ -148,8 +148,8 @@ $(function() {
         });
     }
 
-    let loginForm = $("#loginForm");
-    let registerForm = $("#registerForm");
+    let loginForm = $("#login-form");
+    let registerForm = $("#register-form");
 
     function validateForm(form, rules, messages) {
         form.validate({
@@ -193,7 +193,7 @@ $(function() {
         email: "Please enter a valid email address",
         password: "Please provide a password",
     });
-    handleFormSubmit(loginForm, "/auth/login", $('#loginModal'), $('#loginError'));
+    handleFormSubmit(loginForm, "/auth/login", $('#login-modal'), $('#login-error'));
 
     validateForm(registerForm, {
         email: {
@@ -219,7 +219,7 @@ $(function() {
             equalTo: 'Please enter the same password as above',
         },
     });
-    handleFormSubmit(registerForm, "/user", $('#registerModal'), $('#registerError'));
+    handleFormSubmit(registerForm, "/user", $('#register-modal'), $('#register-error'));
 
     $("#log-out-button :button").click(function() {
         $.ajax({

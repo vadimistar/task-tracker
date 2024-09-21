@@ -22,12 +22,12 @@
                 <div>
                     <ul class="navbar-nav gap-3">
                         <li class="nav-item" id="login-button">
-                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#login-modal">
                                 Login
                             </a>
                         </li>
                         <li class="nav-item" id="register-button">
-                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <a type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#register-modal">
                                 Register
                             </a>
                         </li>
@@ -86,14 +86,14 @@
         </div>
     </div>
 
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="loginModalLabel">Login</h1>
+                    <h1 class="modal-title fs-5" id="login-modal-label">Login</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="loginForm">
+                <form id="login-form">
                     <div class="modal-body">
                         <div class="form-group mt-3">
                             <label>Email</label>
@@ -103,7 +103,7 @@
                             <label>Password</label>
                             <input type="password" class="form-control" name="password" placeholder="Password" required>
                         </div>
-                        <div id="loginError" class="form-group mt-3" hidden>
+                        <div id="login-error" class="form-group mt-3" hidden>
                             <div class="alert alert-danger mt-3"></div>
                         </div>
                     </div>
@@ -116,14 +116,14 @@
         </div>
     </div>
 
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="register-modal" tabindex="-1" aria-labelledby="register-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="registerModalLabel">Register</h1>
+                    <h1 class="modal-title fs-5" id="register-modal-label">Register</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="registerForm">
+                <form id="register-form">
                     <div class="modal-body">
                         <div class="form-group mt-3">
                             <label>Email</label>
@@ -137,7 +137,7 @@
                             <label>Confirm password</label>
                             <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm password" required>
                         </div>
-                        <div id="registerError" class="form-group mt-3" hidden>
+                        <div id="register-error" class="form-group mt-3" hidden>
                             <div class="alert alert-danger mt-3"></div>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal fade" id="task-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -173,7 +173,7 @@
                         <div class="alert alert-success mt-3" id="completed-at" hidden>
                         </div>
                     </div>
-                    <div id="taskModalError" class="form-group mt-3" hidden>
+                    <div id="task-modal-error" class="form-group mt-3" hidden>
                         <div class="alert alert-danger mt-3"></div>
                     </div>
                 </div>
