@@ -160,6 +160,27 @@ $(function() {
         });
     }
 
+    function handleFormSubmit(form, route, modal, error) {
+        form.submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: API_URL + route,
+                xhrFields: { withCredentials: true },
+                data: $(this).serialize(),
+                success: function() {
+                    modal.modal('hide');
+                    toggleError(error, false);
+                    updateUserData();
+                },
+                error: function(xhr) {
+                    toggleError(error, true,
+                        xhr.responseText ? JSON.parse(xhr.responseText).message : "Oops! Something went wrong...");
+                }
+            });
+        });
+    }
+
     validateForm(loginForm, {
         email: {
             required: true,
@@ -172,26 +193,7 @@ $(function() {
         email: "Please enter a valid email address",
         password: "Please provide a password",
     });
-
-    loginForm.submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: `${API_URL}/auth/login`,
-            xhrFields: {
-                withCredentials: true,
-            },
-            data: $(this).serialize(),
-            success: function() {
-                $('#loginModal').modal('hide');
-                updateUserData();
-            },
-            error: function(xhr) {
-                toggleError($('#loginError'), xhr.status === 400 ?
-                    'Invalid email or password' : 'Oops! Something went wrong...');
-            },
-        });
-    });
+    handleFormSubmit(loginForm, "/auth/login", $('#loginModal'), $('#loginError'));
 
     validateForm(registerForm, {
         email: {
@@ -217,23 +219,7 @@ $(function() {
             equalTo: 'Please enter the same password as above',
         },
     });
-
-    registerForm.on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8080/api/user',
-            data: $(this).serialize(),
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: updateUserData,
-            error: function(xhr) {
-                toggleError($("#registerError"), true,
-                    xhr.responseText ? JSON.parse(xhr.responseText).message : "Oops! Something went wrong...");
-            }
-        });
-    });
+    handleFormSubmit(registerForm, "/user", $('#registerModal'), $('#registerError'));
 
     $("#log-out-button :button").click(function() {
         $.ajax({
