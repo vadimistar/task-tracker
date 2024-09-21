@@ -46,7 +46,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDto> handleBadCredentialsException(BadCredentialsException ex) {
-        ErrorDto errorDto = new ErrorDto(ex.getMessage());
+        ErrorDto errorDto = new ErrorDto("Invalid email or password");
         return ResponseEntity.badRequest().body(errorDto);
     }
 
