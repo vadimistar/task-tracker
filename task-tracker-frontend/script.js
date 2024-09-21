@@ -1,275 +1,221 @@
+const DEBOUNCE_TIME = 500;
 $(function() {
-    function validateErrorPlacement(error, element) {
-        let errorDiv = $([
-            '<div class="form-group mt-3">',
-            '    <div class="alert alert-danger mt-3"></div>',
-            '</div>'
-        ].join(""));
+    const API_URL = 'http://localhost:8080/api';
+
+    function appendErrorToForm(error, element) {
+        let errorDiv = $(`
+            <div class="form-group mt-3">
+                <div class="alert alert-danger mt-3"></div>
+            </div>
+        `);
         error.appendTo(errorDiv.find("div.alert"));
         errorDiv.insertAfter(element);
     }
 
-    function validateSuccess(error, element) {
+    function removeErrorFromForm(error, element) {
         $(element).next().remove();
     }
 
-    function setNavbarToAuthorized() {
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:8080/api/user',
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: function(data) {
-                $('#email-text').text(data.email);
-            },
-            error: function(xhr) {
-                console.log('Cannot get user data (status ' + xhr.status + ')');
-            },
-        });
-
-        $('#login-button').attr('hidden', true);
-        $('#register-button').attr('hidden', true);
-        $('#user-email').removeAttr('hidden');
-        $('#log-out-button').removeAttr('hidden');
-    }
-
-    function setNavbarToUnauthorized() {
-        $('#login-button').removeAttr('hidden');
-        $('#register-button').removeAttr('hidden');
-        $('#user-email').attr('hidden', true);
-        $('#log-out-button').attr('hidden', true);
-    }
-
     function formatTime(time) {
-        let date = new Date(time);
-        return date.toLocaleString('en-GB');
+        return new Date(time).toLocaleString('en-GB');
     }
 
-    let tasks = {};
+    function createTaskDiv() {
+        return $(`
+            <a type="button" class="list-group-item list-group-item-action" 
+            data-bs-toggle="modal" data-bs-target="#taskModal">
+            </a>
+        `);
+    }
+
+    function jsonTaskToTaskDiv(task) {
+        let div = createTaskDiv();
+        div.text(task.title).attr("data-task-id", task.id);
+        return div;
+    }
+
+    function toggleError(element, active, text = '') {
+        element.attr('hidden', !active);
+        if (active) {
+            element.find('div.alert').text(text);
+        }
+    }
+
+    function updateTaskModal(task) {
+        $('#taskModal input[name="title"]').val(task.title);
+        $('#taskModal textarea[name="text"]').val(task.text);
+        $('#taskModal input[name="is-completed"]').prop("checked", task.isCompleted);
+        $("#completed-at")
+            .attr('hidden', !task.completedAt)
+            .text(task.completedAt ? `Done at ${formatTime(task.completedAt)}` : '');
+    }
+
+    function updateNavbar(authenticated, userData = {}) {
+        $("#login-button, #register-button").attr('hidden', authenticated);
+        $("#user-email, #log-out-button").attr('hidden', !authenticated);
+
+        if (authenticated && userData.email) {
+            $("#email-text").text(userData.email);
+        }
+    }
+
+    const tasks = {};
 
     function fetchTasks() {
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8080/api/tasks',
-            xhrFields: {
-                withCredentials: true,
-            },
+            url: `${API_URL}/tasks`,
+            xhrFields: { withCredentials: true },
             success: function(data) {
-                function createTaskDiv() {
-                    return $([
-                        '<a type="button" class="list-group-item list-group-item-action" ',
-                        'data-bs-toggle="modal" data-bs-target="#taskModal">',
-                        '</a>',
-                    ].join(""));
-                }
-
-                let doneTasks = $("#done-tasks");
-                let toDoTasks = $("#to-do-tasks");
-
-                doneTasks.empty();
-                toDoTasks.empty();
+                let doneTasks = $("#done-tasks").empty();
+                let toDoTasks = $("#to-do-tasks").empty();
 
                 data.forEach(task => {
-                    let div = createTaskDiv();
-                    div.text(task.title);
-                    div.attr("data-task-id", task.id);
+                    let taskDiv = jsonTaskToTaskDiv(task);
                     tasks[task.id] = task;
                     if (task.isCompleted) {
-                        doneTasks.append(div);
+                        doneTasks.append(taskDiv);
                     } else {
-                        toDoTasks.append(div);
+                        toDoTasks.append(taskDiv);
                     }
                 });
             },
-            error: function (xhr) {
-                console.log('Cannot get user tasks (status ' + xhr.status + ')');
-            },
         });
 
-        $('#tasks-container').removeAttr('hidden');
+        $('#tasks-container').attr('hidden', false);
     }
 
     $('#taskModal').on('show.bs.modal', function(e) {
-        let task = tasks[$(e.relatedTarget).data('task-id')]
-        $(e.currentTarget).find('input[name="title"]').val(task.title);
-        $(e.currentTarget).find('textarea[name="text"]').val(task.text);
-        $(e.currentTarget).find('input[name="is-completed"]').prop("checked", task.isCompleted);
-        if (task.completedAt != null) {
-            $("#completed-at").attr('hidden', false).text('Done at ' + formatTime(task.completedAt));
-        } else {
-            $("#completed-at").attr('hidden', true);
-        }
-        $(e.currentTarget).find('button[name="delete"]')
-            .off('click')
-            .click(function() {
-                $.ajax({
-                    type: 'DELETE',
-                    url: 'http://localhost:8080/api/task',
-                    xhrFields: {
-                        withCredentials: true,
-                    },
-                    data: { id: task.id },
-                    success: function() {
-                        // TODO: Replace with removing a single element
-                        fetchTasks();
-                    },
-                    error: function(xhr) {
-                        console.log('Cannot remove task (status ' + xhr.status + ')');
-                    },
-                });
+        let task = tasks[$(e.relatedTarget).data('task-id')];
+
+        updateTaskModal(task);
+
+        $(e.currentTarget).find('button[name="delete"]').off('click').click(function() {
+            $.ajax({
+                type: 'DELETE',
+                url: `${API_URL}/task`,
+                xhrFields: { withCredentials: true },
+                data: { id: task.id },
+                success: function () { $(`#to-do-tasks a[data-task-id="${task.id}"]`).remove(); }
             });
+        });
 
-        $('#taskModal input[name="title"]')
-            .off('keyup')
-            .keyup($.debounce(500, function () {
+        $('#taskModal input[name="title"], #taskModal textarea[name="text"]').off('keyup').keyup(
+            $.debounce(DEBOUNCE_TIME, function () {
+                const field = $(this).attr('name');
                 $.ajax({
                     type: 'PATCH',
-                    url: 'http://localhost:8080/api/task',
-                    xhrFields: {
-                        withCredentials: true,
-                    },
-                    data: { id: task.id, title: $(this).val() },
+                    url: `${API_URL}/task`,
+                    xhrFields: { withCredentials: true },
+                    data: { id: task.id, [field]: $(this).val() },
                     success: function(data) {
-                        $("#taskModalError").attr('hidden', true);
-                        task.title = data.title;
-                        $('#to-do-tasks a[data-task-id="' + task.id + '"]').text(task.title);
-                    },
-                    error: function(xhr) {
-                        let error = $("#taskModalError");
-                        error.removeAttr('hidden');
-                        let errorText = error.find("div.alert");
-                        let data = JSON.parse(xhr.responseText);
-                        errorText.text(data.message);
-                    },
-                });
-            }));
-
-        $('#taskModal textarea[name="text"]')
-            .off('keyup')
-            .keyup($.debounce(500, function () {
-                $.ajax({
-                    type: 'PATCH',
-                    url: 'http://localhost:8080/api/task',
-                    xhrFields: {
-                        withCredentials: true,
-                    },
-                    data: { id: task.id, text: $(this).val() },
-                    success: function(data) {
-                        task.text = data.text;
-                    },
-                });
-            }));
-
-        $('#taskModal input[name="is-completed"]')
-            .off('change')
-            .change(function () {
-                $.ajax({
-                    type: 'PATCH',
-                    url: 'http://localhost:8080/api/task',
-                    xhrFields: {
-                        withCredentials: true,
-                    },
-                    data: { id: task.id, isCompleted: $(this).prop('checked') },
-                    success: function(data) {
-                        task.isCompleted = data.isCompleted;
-                        task.completedAt = data.completedAt;
-                        if (task.completedAt != null) {
-                            $("#completed-at").attr('hidden', false).text('Done at ' + formatTime(data.completedAt));
-                        } else {
-                            $("#completed-at").attr('hidden', true);
+                        task[field] = data[field];
+                        if (field === 'title') {
+                            $(`#to-do-tasks a[data-task-id="${task.id}"]`).text(task.title);
                         }
-                        fetchTasks();
+                        toggleError($('#taskModalError'), false);
+                    },
+                    error: function(xhr) {
+                        toggleError($('#taskModalError'), true, JSON.parse(xhr.responseText).message);
                     },
                 });
+            }));
+
+        $('#taskModal input[name="is-completed"]').off('change').change(function () {
+            $.ajax({
+                type: 'PATCH',
+                url: `${API_URL}/task`,
+                xhrFields: { withCredentials: true },
+                data: { id: task.id, isCompleted: $(this).prop('checked') },
+                success: function(data) {
+                    task.isCompleted = data.isCompleted;
+                    task.completedAt = data.completedAt;
+                    fetchTasks();
+                },
             });
+        });
     });
+
+    function updateUserData() {
+        $.ajax({
+            type: 'GET',
+            url: `${API_URL}/user`,
+            xhrFields: { withCredentials: true },
+            success: function(data) {
+                updateNavbar(true, data);
+                fetchTasks();
+            },
+        });
+    }
 
     let loginForm = $("#loginForm");
     let registerForm = $("#registerForm");
 
-    loginForm.validate({
-        rules: {
-            email: {
-                required: true,
-                email: true,
-            },
-            password: {
-                required: true,
-            },
+    function validateForm(form, rules, messages) {
+        form.validate({
+            rules: rules,
+            messages: messages,
+            errorPlacement: appendErrorToForm,
+            success: removeErrorFromForm,
+        });
+    }
+
+    validateForm(loginForm, {
+        email: {
+            required: true,
+            email: true,
         },
-        messages: {
-            email: 'Please enter a valid email address',
-            password: 'Please provide a password',
+        password: {
+            required: true,
         },
-        errorPlacement: validateErrorPlacement,
-        success: validateSuccess,
+    }, {
+        email: "Please enter a valid email address",
+        password: "Please provide a password",
     });
 
     loginForm.submit(function(e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8080/api/auth/login',
+            url: `${API_URL}/auth/login`,
             xhrFields: {
                 withCredentials: true,
             },
             data: $(this).serialize(),
             success: function() {
                 $('#loginModal').modal('hide');
-                $("#loginError").attr('hidden', true);
-                setNavbarToAuthorized();
-                fetchTasks();
+                updateUserData();
             },
             error: function(xhr) {
-                let error = $("#loginError");
-                error.removeAttr('hidden');
-                let errorText = error.find("div.alert");
-                switch (xhr.status) {
-                    case 400:
-                        errorText.text("Invalid email or password");
-                        break;
-                    default:
-                        if (xhr.responseText === undefined) {
-                            errorText.text('Oops! Something went wrong...');
-                            break;
-                        }
-                        let data = JSON.parse(xhr.responseText);
-                        errorText.text(data.message);
-                        break;
-                }
+                toggleError($('#loginError'), xhr.status === 400 ?
+                    'Invalid email or password' : 'Oops! Something went wrong...');
             },
         });
     });
 
-    registerForm.validate({
-        rules: {
-            email: {
-                required: true,
-                email: true,
-            },
-            password: {
-                required: true,
-                minlength: 5,
-            },
-            confirmPassword: {
-                required: true,
-                equalTo: "#registerPassword",
-            },
+    validateForm(registerForm, {
+        email: {
+            required: true,
+            email: true,
         },
-        messages: {
-            email: 'Please enter a valid email address',
-            password: {
-                required: 'Please provide a password',
-                minlength: 'Your password must be at least 5 password long',
-            },
-            confirmPassword: {
-                required: 'Please provide a password',
-                equalTo: 'Please enter the same password as above',
-            },
+        password: {
+            required: true,
+            minlength: 5,
         },
-        errorPlacement: validateErrorPlacement,
-        success: validateSuccess,
+        confirmPassword: {
+            required: true,
+            equalTo: "#registerPassword",
+        },
+    }, {
+        email: 'Please enter a valid email address',
+        password: {
+            required: 'Please provide a password',
+            minlength: 'Your password must be at least 5 password long',
+        },
+        confirmPassword: {
+            required: 'Please provide a password',
+            equalTo: 'Please enter the same password as above',
+        },
     });
 
     registerForm.on('submit', function(e) {
@@ -281,22 +227,10 @@ $(function() {
             xhrFields: {
                 withCredentials: true,
             },
-            success: function() {
-                $('#registerModal').modal('hide');
-                $("#registerError").attr('hidden', true);
-                setNavbarToAuthorized();
-                fetchTasks();
-            },
+            success: updateUserData,
             error: function(xhr) {
-                let error = $("#registerError");
-                error.removeAttr('hidden');
-                let errorText = error.find("div.alert");
-                if (xhr.responseText === undefined) {
-                    errorText.text('Oops! Something went wrong...');
-                    return;
-                }
-                let data = JSON.parse(xhr.responseText);
-                errorText.text(data.message);
+                toggleError($("#registerError"), true,
+                    xhr.responseText ? JSON.parse(xhr.responseText).message : "Oops! Something went wrong...");
             }
         });
     });
@@ -304,42 +238,27 @@ $(function() {
     $("#log-out-button :button").click(function() {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8080/api/auth/logout',
+            url: `${API_URL}/auth/logout`,
             xhrFields: {
                 withCredentials: true,
             },
             success: function() {
-                setNavbarToUnauthorized();
+                updateNavbar(false);
                 $("#tasks-container").attr("hidden", true);
             }
         })
     });
 
-    $("#create-task").on('submit', function (e) {
+    $("#create-task").submit(function (e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8080/api/task',
+            url: `${API_URL}/task`,
             data: $(this).serialize(),
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: function() {
-                fetchTasks();
-            },
+            xhrFields: { withCredentials: true },
+            success: fetchTasks,
         });
-    })
-
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:8080/api/user',
-        xhrFields: {
-            withCredentials: true,
-        },
-        success: function() {
-            setNavbarToAuthorized();
-            fetchTasks();
-        },
-        error: function(xhr) {}
     });
+
+    updateUserData();
 });
