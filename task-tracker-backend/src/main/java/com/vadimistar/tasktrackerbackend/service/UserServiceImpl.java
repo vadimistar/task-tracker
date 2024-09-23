@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailSendingService emailSendingService;
 
     @Override
     public JwtTokenDto registerUser(RegisterUserDto registerUserDto) {
@@ -35,6 +36,13 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.mapRegisterUserDtoToUser(registerUserDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
+        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+                .destinationEmail(registerUserDto.getEmail())
+                .header("Registration email")
+                .text("Welcome to our service!")
+                .build();
+        emailSendingService.sendEmail(emailSendingTask);
 
         AuthorizeUserDto authorizeUserDto = userMapper.mapRegisterUserDtoToAuthorizeUserDto(registerUserDto);
         return authorizeUser(authorizeUserDto);
