@@ -4,7 +4,7 @@ import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.exception.UserAlreadyExistsException;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
 import com.vadimistar.tasktrackerbackend.service.EmailSendingService;
-import com.vadimistar.tasktrackerbackend.service.EmailSendingTask;
+import com.vadimistar.tasktrackerbackend.dto.EmailSendingTaskDto;
 import com.vadimistar.tasktrackerbackend.service.JwtService;
 import com.vadimistar.tasktrackerbackend.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -102,7 +102,7 @@ public class UserServiceTests {
 
     @Test
     void registerUser_success_registerEmailSent() {
-        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+        EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
                 .destinationEmail("admin@admin.com")
                 .header("Registration email")
                 .text("Welcome to our service!")

@@ -1,6 +1,8 @@
 package com.vadimistar.tasktrackerbackend.service;
 
+import com.vadimistar.tasktrackerbackend.dto.EmailSendingTaskDto;
+
 public interface EmailSendingService {
 
-    void sendEmail(EmailSendingTask task);
+    void sendEmail(EmailSendingTaskDto task);
 }

@@ -1,11 +1,11 @@
-package com.vadimistar.tasktrackerbackend.service;
+package com.vadimistar.tasktrackerbackend.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class EmailSendingTask {
+public class EmailSendingTaskDto {
 
     private String destinationEmail;
     private String header;

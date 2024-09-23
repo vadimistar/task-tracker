@@ -1,9 +1,6 @@
 package com.vadimistar.tasktrackerbackend.service;
 
-import com.vadimistar.tasktrackerbackend.dto.AuthorizeUserDto;
-import com.vadimistar.tasktrackerbackend.dto.CurrentUserDto;
-import com.vadimistar.tasktrackerbackend.dto.RegisterUserDto;
-import com.vadimistar.tasktrackerbackend.dto.JwtTokenDto;
+import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.entity.User;
 import com.vadimistar.tasktrackerbackend.exception.UserAlreadyExistsException;
 import com.vadimistar.tasktrackerbackend.mapper.UserMapper;
@@ -37,7 +34,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+        EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
                 .destinationEmail(registerUserDto.getEmail())
                 .header("Registration email")
                 .text("Welcome to our service!")
