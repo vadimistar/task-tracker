@@ -3,6 +3,8 @@ package com.vadimistar.tasktrackerbackend;
 import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.exception.UserAlreadyExistsException;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
+import com.vadimistar.tasktrackerbackend.service.EmailSendingService;
+import com.vadimistar.tasktrackerbackend.service.EmailSendingTask;
 import com.vadimistar.tasktrackerbackend.service.JwtService;
 import com.vadimistar.tasktrackerbackend.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -10,12 +12,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -30,6 +35,9 @@ public class UserServiceTests {
 
     @Autowired
     private JwtService jwtService;
+
+    @MockBean
+    private EmailSendingService emailSendingService;
 
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0");
@@ -90,5 +98,23 @@ public class UserServiceTests {
         JwtTokenDto jwtTokenDto = userService.authorizeUser(authorizeUserDto);
 
         Assertions.assertTrue(jwtService.isTokenValid(jwtTokenDto.getToken()));
+    }
+
+    @Test
+    void registerUser_success_registerEmailSent() {
+        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+                .destinationEmail("admin@admin.com")
+                .header("Registration email")
+                .text("Welcome to our service!")
+                .build();
+
+        doNothing().when(emailSendingService).sendEmail(emailSendingTask);
+
+        RegisterUserDto registerUserDto = RegisterUserDto.builder()
+                .email("admin@admin.com")
+                .password("admin")
+                .build();
+
+        userService.registerUser(registerUserDto);
     }
 }
