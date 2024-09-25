@@ -22,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final SendEmailService sendEmailService;
+    private final RegisterEmailConfig registerEmailConfig;
 
     @Override
     public JwtTokenDto loginUser(LoginUserDto loginUserDto) {
@@ -45,8 +46,8 @@ public class AuthServiceImpl implements AuthService {
 
         SendEmailTask sendEmailTask = SendEmailTask.builder()
                 .destinationEmail(registerUserDto.getEmail())
-                .header("Registration email")
-                .text("Welcome to our service!")
+                .header(registerEmailConfig.getSubject())
+                .text(registerEmailConfig.getText())
                 .build();
         sendEmailService.sendEmail(sendEmailTask);
 
