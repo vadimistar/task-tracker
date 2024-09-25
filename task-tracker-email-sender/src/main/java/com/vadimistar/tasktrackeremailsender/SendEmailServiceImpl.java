@@ -16,16 +16,16 @@ public class SendEmailServiceImpl implements SendEmailService {
 
     @Override
     public void sendEmail(SendEmailTask task) {
-        log.info("Received task with email to '{}' and header '{}'", task.getDestinationEmail(), task.getHeader());
+        log.info("Received task with email to '{}' and subject '{}'", task.getDestinationEmail(), task.getSubject());
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailConfig.getFromAddress());
         message.setTo(task.getDestinationEmail());
-        message.setSubject(task.getHeader());
+        message.setSubject(task.getSubject());
         message.setText(task.getText());
 
         javaMailSender.send(message);
 
-        log.info("Successfully send an email to '{}' with header '{}'", task.getDestinationEmail(), task.getHeader());
+        log.info("Successfully send an email to '{}' with subject '{}'", task.getDestinationEmail(), task.getSubject());
     }
 }

@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
 
         SendEmailTask sendEmailTask = SendEmailTask.builder()
                 .destinationEmail(registerUserDto.getEmail())
-                .header(registerEmailConfig.getSubject())
+                .subject(registerEmailConfig.getSubject())
                 .text(registerEmailConfig.getText())
                 .build();
         sendEmailService.sendEmail(sendEmailTask);

@@ -106,7 +106,7 @@ public class AuthServiceTests {
     void registerUser_success_registerEmailSent() {
         SendEmailTask sendEmailTask = SendEmailTask.builder()
                 .destinationEmail("admin@admin.com")
-                .header("Registration email")
+                .subject("Registration email")
                 .text("Welcome to our service!")
                 .build();
 

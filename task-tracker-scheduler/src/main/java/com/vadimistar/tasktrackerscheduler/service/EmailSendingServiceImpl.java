@@ -15,7 +15,7 @@ public class EmailSendingServiceImpl implements EmailSendingService {
 
     @Override
     public void sendEmail(EmailSendingTaskDto task) {
-        log.info("Send task with email to '{}' and header '{}' to email sender", task.getDestinationEmail(), task.getHeader());
+        log.info("Send task with email to '{}' and subject '{}' to email sender", task.getDestinationEmail(), task.getSubject());
 
         kafkaTemplate.send("EMAIL_SENDING_TASKS", task);
     }

@@ -58,7 +58,7 @@ public class SendReportsService {
 
             EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
                     .destinationEmail(user.getEmail())
-                    .header("Task Service - Daily Report")
+                    .subject("Task Service - Daily Report")
                     .text(emailText.toString())
                     .build();
 

@@ -8,6 +8,6 @@ import lombok.Data;
 public class EmailSendingTaskDto {
 
     private String destinationEmail;
-    private String header;
+    private String subject;
     private String text;
 }

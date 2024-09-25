@@ -6,6 +6,6 @@ import lombok.Data;
 public class SendEmailTask {
 
     private String destinationEmail;
-    private String header;
+    private String subject;
     private String text;
 }
