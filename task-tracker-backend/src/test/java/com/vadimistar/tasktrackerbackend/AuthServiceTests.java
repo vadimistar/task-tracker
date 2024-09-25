@@ -86,7 +86,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    void authorizeUser_validCredentials_returnsValidToken() {
+    void loginUser_validCredentials_returnsValidToken() {
         RegisterUserDto registerUserDto = RegisterUserDto.builder()
                 .email("admin@admin.com")
                 .password("admin")
