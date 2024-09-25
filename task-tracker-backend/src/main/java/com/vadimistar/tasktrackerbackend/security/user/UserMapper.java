@@ -1,6 +1,8 @@
 package com.vadimistar.tasktrackerbackend.security.user;
 
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
+import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
+import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

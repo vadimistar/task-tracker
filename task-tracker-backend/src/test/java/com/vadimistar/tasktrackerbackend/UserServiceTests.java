@@ -2,10 +2,12 @@ package com.vadimistar.tasktrackerbackend;
 
 import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
 import com.vadimistar.tasktrackerbackend.email.EmailSendingTaskDto;
-import com.vadimistar.tasktrackerbackend.security.AuthService;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
+import com.vadimistar.tasktrackerbackend.security.auth.AuthService;
+import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
+import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
+import com.vadimistar.tasktrackerbackend.security.auth.UserAlreadyExistsException;
+import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

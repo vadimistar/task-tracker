@@ -1,9 +1,8 @@
-package com.vadimistar.tasktrackerbackend.security;
+package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
 import com.vadimistar.tasktrackerbackend.email.EmailSendingTaskDto;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
+import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

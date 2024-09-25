@@ -1,6 +1,6 @@
-package com.vadimistar.tasktrackerbackend.common;
+package com.vadimistar.tasktrackerbackend.error;
 
-import com.vadimistar.tasktrackerbackend.security.user.UserAlreadyExistsException;
+import com.vadimistar.tasktrackerbackend.security.auth.UserAlreadyExistsException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;

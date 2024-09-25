@@ -1,8 +1,6 @@
-package com.vadimistar.tasktrackerbackend.security;
+package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
-import com.vadimistar.tasktrackerbackend.security.user.LoginUserDto;
-import com.vadimistar.tasktrackerbackend.security.user.RegisterUserDto;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

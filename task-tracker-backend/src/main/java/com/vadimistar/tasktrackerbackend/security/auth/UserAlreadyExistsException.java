@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.security.user;
+package com.vadimistar.tasktrackerbackend.security.auth;
 
 public class UserAlreadyExistsException extends RuntimeException {
 

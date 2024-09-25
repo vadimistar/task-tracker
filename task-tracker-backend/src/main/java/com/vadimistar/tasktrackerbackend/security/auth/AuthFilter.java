@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.security;
+package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
 import jakarta.servlet.FilterChain;

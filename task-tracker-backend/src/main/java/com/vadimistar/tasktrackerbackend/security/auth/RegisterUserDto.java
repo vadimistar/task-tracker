@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.security.user;
+package com.vadimistar.tasktrackerbackend.security.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

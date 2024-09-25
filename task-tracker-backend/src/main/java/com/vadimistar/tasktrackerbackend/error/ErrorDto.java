@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.common;
+package com.vadimistar.tasktrackerbackend.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

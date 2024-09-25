@@ -1,9 +1,12 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.vadimistar.tasktrackerbackend.security.*;
+import com.vadimistar.tasktrackerbackend.security.auth.AuthController;
+import com.vadimistar.tasktrackerbackend.security.auth.AuthService;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
-import com.vadimistar.tasktrackerbackend.security.user.*;
+import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
+import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
