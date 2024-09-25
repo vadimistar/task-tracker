@@ -2,6 +2,8 @@ package com.vadimistar.tasktrackerbackend.error;
 
 import com.vadimistar.tasktrackerbackend.security.auth.UserAlreadyExistsException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Configuration
 @Log4j2
 public class GlobalControllerAdvice {
+
+    @Value("${task-tracker.log.max-stack.trace:10}")
+    private long maxStackTrace;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -52,7 +58,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception ex) {
         String stackTrace = Arrays.stream(ex.getStackTrace())
-                .limit(MAX_STACK_TRACE_SIZE)
+                .limit(maxStackTrace)
                 .map(StackTraceElement::toString)
                 .collect(Collectors.joining("\n"));
         log.error("Exception occurred {}: {}\nStack trace:\n{}",
@@ -60,6 +66,4 @@ public class GlobalControllerAdvice {
         ErrorDto errorDto = new ErrorDto("Internal server error");
         return ResponseEntity.internalServerError().body(errorDto);
     }
-
-    private static final int MAX_STACK_TRACE_SIZE = 10;
 }
