@@ -6,8 +6,9 @@ import com.vadimistar.tasktrackerbackend.security.auth.AuthService;
 import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
 import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
 import com.vadimistar.tasktrackerbackend.security.auth.UserAlreadyExistsException;
-import com.vadimistar.tasktrackerbackend.security.jwt.*;
-import com.vadimistar.tasktrackerbackend.security.user.*;
+import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
+import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
+import com.vadimistar.tasktrackerbackend.security.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +27,7 @@ import static org.mockito.Mockito.doNothing;
 @SpringBootTest
 @ActiveProfiles("dev")
 @Testcontainers
-public class UserServiceTests {
-
-    @Autowired
-    private UserService userService;
+public class AuthServiceTests {
 
     @Autowired
     private AuthService authService;
