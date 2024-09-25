@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend.security.auth;
 
-import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
-import com.vadimistar.tasktrackerbackend.email.EmailSendingTask;
+import com.vadimistar.tasktrackerbackend.email.SendEmailService;
+import com.vadimistar.tasktrackerbackend.email.SendEmailTask;
 import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final EmailSendingService emailSendingService;
+    private final SendEmailService sendEmailService;
 
     @Override
     public JwtTokenDto loginUser(LoginUserDto loginUserDto) {
@@ -43,12 +43,12 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+        SendEmailTask sendEmailTask = SendEmailTask.builder()
                 .destinationEmail(registerUserDto.getEmail())
                 .header("Registration email")
                 .text("Welcome to our service!")
                 .build();
-        emailSendingService.sendEmail(emailSendingTask);
+        sendEmailService.sendEmail(sendEmailTask);
 
         LoginUserDto loginUserDto = userMapper.mapRegisterUserDtoToAuthorizeUserDto(registerUserDto);
         return loginUser(loginUserDto);

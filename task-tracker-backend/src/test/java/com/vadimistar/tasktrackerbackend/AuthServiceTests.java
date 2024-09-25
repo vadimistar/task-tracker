@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend;
 
-import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
-import com.vadimistar.tasktrackerbackend.email.EmailSendingTask;
+import com.vadimistar.tasktrackerbackend.email.SendEmailService;
+import com.vadimistar.tasktrackerbackend.email.SendEmailTask;
 import com.vadimistar.tasktrackerbackend.security.auth.AuthService;
 import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
 import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
@@ -39,7 +39,7 @@ public class AuthServiceTests {
     private JwtService jwtService;
 
     @MockBean
-    private EmailSendingService emailSendingService;
+    private SendEmailService sendEmailService;
 
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0");
@@ -104,13 +104,13 @@ public class AuthServiceTests {
 
     @Test
     void registerUser_success_registerEmailSent() {
-        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
+        SendEmailTask sendEmailTask = SendEmailTask.builder()
                 .destinationEmail("admin@admin.com")
                 .header("Registration email")
                 .text("Welcome to our service!")
                 .build();
 
-        doNothing().when(emailSendingService).sendEmail(emailSendingTask);
+        doNothing().when(sendEmailService).sendEmail(sendEmailTask);
 
         RegisterUserDto registerUserDto = RegisterUserDto.builder()
                 .email("admin@admin.com")
