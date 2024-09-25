@@ -22,6 +22,7 @@ public class SendReportsService {
     private final UserService userService;
     private final TaskService taskService;
     private final SendEmailService sendEmailService;
+    private final ReportEmailConfig reportEmailConfig;
 
     @PostConstruct
     public void onStartup() {
@@ -61,7 +62,7 @@ public class SendReportsService {
 
             SendEmailTask emailSendingTask = SendEmailTask.builder()
                     .destinationEmail(user.getEmail())
-                    .subject("Task Service - Daily Report")
+                    .subject(reportEmailConfig.getSubject())
                     .text(emailText.toString())
                     .build();
 
