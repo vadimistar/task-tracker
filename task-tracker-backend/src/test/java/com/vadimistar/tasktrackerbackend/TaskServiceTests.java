@@ -8,7 +8,7 @@ import com.vadimistar.tasktrackerbackend.task.Task;
 import com.vadimistar.tasktrackerbackend.security.user.User;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.task.TaskNotFoundException;
-import com.vadimistar.tasktrackerbackend.security.user.UserMapper;
+import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.task.TaskRepository;
 import com.vadimistar.tasktrackerbackend.security.user.UserRepository;
 import com.vadimistar.tasktrackerbackend.task.TaskService;

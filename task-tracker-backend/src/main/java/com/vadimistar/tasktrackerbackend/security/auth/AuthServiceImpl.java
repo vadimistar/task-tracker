@@ -2,6 +2,7 @@ package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.email.SendEmailService;
 import com.vadimistar.tasktrackerbackend.email.SendEmailTask;
+import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         sendEmailService.sendEmail(sendEmailTask);
 
-        LoginUserDto loginUserDto = userMapper.mapRegisterUserDtoToAuthorizeUserDto(registerUserDto);
+        LoginUserDto loginUserDto = userMapper.mapRegisterUserDtoToLoginUserDto(registerUserDto);
         return loginUser(loginUserDto);
     }
 }

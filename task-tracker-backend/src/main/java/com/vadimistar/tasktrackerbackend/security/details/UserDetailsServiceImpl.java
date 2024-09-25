@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend.security.details;
 
 import com.vadimistar.tasktrackerbackend.security.user.User;
-import com.vadimistar.tasktrackerbackend.security.user.UserMapper;
+import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

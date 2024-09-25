@@ -2,7 +2,7 @@ package com.vadimistar.tasktrackerbackend.task;
 
 import com.vadimistar.tasktrackerbackend.security.user.User;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
-import com.vadimistar.tasktrackerbackend.security.user.UserMapper;
+import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.task.dto.CreateTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.DeleteTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.TaskDto;
