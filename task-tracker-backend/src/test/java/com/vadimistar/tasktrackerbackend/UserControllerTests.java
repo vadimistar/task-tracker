@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @ActiveProfiles("dev")
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CorsConfig.class})
 @Testcontainers
 public class UserControllerTests {
 
@@ -57,11 +57,10 @@ public class UserControllerTests {
 
         when(userService.registerUser(request)).thenReturn(mockJwtTokenDto());
 
-        String requestBody = objectMapper.writeValueAsString(request);
-
         mockMvc.perform(post("/api/user")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .param("email", request.getEmail())
+                        .param("password", request.getPassword()))
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("authToken"));
     }
@@ -75,11 +74,10 @@ public class UserControllerTests {
 
         when(userService.authorizeUser(request)).thenReturn(mockJwtTokenDto());
 
-        String requestBody = objectMapper.writeValueAsString(request);
-
         mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .param("email", request.getEmail())
+                        .param("password", request.getPassword()))
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("authToken"));
     }
