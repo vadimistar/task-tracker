@@ -1,8 +1,5 @@
-package com.vadimistar.tasktrackerscheduler.service;
+package com.vadimistar.tasktrackerscheduler.user;
 
-import com.vadimistar.tasktrackerscheduler.dto.UserDto;
-import com.vadimistar.tasktrackerscheduler.mapper.UserMapper;
-import com.vadimistar.tasktrackerscheduler.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

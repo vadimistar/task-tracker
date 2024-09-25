@@ -1,8 +1,11 @@
-package com.vadimistar.tasktrackerscheduler.service;
+package com.vadimistar.tasktrackerscheduler;
 
-import com.vadimistar.tasktrackerscheduler.dto.EmailSendingTaskDto;
-import com.vadimistar.tasktrackerscheduler.dto.TaskDto;
-import com.vadimistar.tasktrackerscheduler.dto.UserDto;
+import com.vadimistar.tasktrackerscheduler.email.SendEmailService;
+import com.vadimistar.tasktrackerscheduler.email.SendEmailTask;
+import com.vadimistar.tasktrackerscheduler.task.TaskDto;
+import com.vadimistar.tasktrackerscheduler.task.TaskService;
+import com.vadimistar.tasktrackerscheduler.user.UserDto;
+import com.vadimistar.tasktrackerscheduler.user.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -18,7 +21,7 @@ public class SendReportsService {
 
     private final UserService userService;
     private final TaskService taskService;
-    private final EmailSendingService emailSendingService;
+    private final SendEmailService sendEmailService;
 
     @PostConstruct
     public void onStartup() {
@@ -56,13 +59,13 @@ public class SendReportsService {
                 emailText.append(createCompletedTasksMessage(tasksCompletedLastDay));
             }
 
-            EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
+            SendEmailTask emailSendingTask = SendEmailTask.builder()
                     .destinationEmail(user.getEmail())
                     .subject("Task Service - Daily Report")
                     .text(emailText.toString())
                     .build();
 
-            emailSendingService.sendEmail(emailSendingTask);
+            sendEmailService.sendEmail(emailSendingTask);
         }
     }
 

@@ -1,7 +1,5 @@
-package com.vadimistar.tasktrackerscheduler.mapper;
+package com.vadimistar.tasktrackerscheduler.task;
 
-import com.vadimistar.tasktrackerscheduler.dto.TaskDto;
-import com.vadimistar.tasktrackerscheduler.entity.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

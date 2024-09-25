@@ -1,6 +1,5 @@
-package com.vadimistar.tasktrackerscheduler.service;
+package com.vadimistar.tasktrackerscheduler.task;
 
-import com.vadimistar.tasktrackerscheduler.dto.TaskDto;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

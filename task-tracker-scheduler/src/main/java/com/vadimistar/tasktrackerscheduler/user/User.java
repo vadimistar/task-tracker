@@ -1,5 +1,6 @@
-package com.vadimistar.tasktrackerscheduler.entity;
+package com.vadimistar.tasktrackerscheduler.user;
 
+import com.vadimistar.tasktrackerscheduler.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
 

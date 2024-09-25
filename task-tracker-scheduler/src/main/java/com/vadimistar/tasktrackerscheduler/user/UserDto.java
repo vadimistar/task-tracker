@@ -1,5 +1,6 @@
-package com.vadimistar.tasktrackerscheduler.dto;
+package com.vadimistar.tasktrackerscheduler.user;
 
+import com.vadimistar.tasktrackerscheduler.task.TaskDto;
 import lombok.Builder;
 import lombok.Data;
 

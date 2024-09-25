@@ -1,6 +1,5 @@
-package com.vadimistar.tasktrackerscheduler.repository;
+package com.vadimistar.tasktrackerscheduler.task;
 
-import com.vadimistar.tasktrackerscheduler.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

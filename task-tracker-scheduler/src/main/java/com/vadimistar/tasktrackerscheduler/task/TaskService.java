@@ -1,6 +1,4 @@
-package com.vadimistar.tasktrackerscheduler.service;
-
-import com.vadimistar.tasktrackerscheduler.dto.TaskDto;
+package com.vadimistar.tasktrackerscheduler.task;
 
 import java.util.List;
 
