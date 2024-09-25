@@ -1,14 +1,12 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vadimistar.tasktrackerbackend.config.CorsConfig;
-import com.vadimistar.tasktrackerbackend.config.WebSecurityConfig;
-import com.vadimistar.tasktrackerbackend.controller.UserController;
-import com.vadimistar.tasktrackerbackend.dto.*;
-import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
-import com.vadimistar.tasktrackerbackend.service.JwtService;
-import com.vadimistar.tasktrackerbackend.service.UserDetailsServiceImpl;
-import com.vadimistar.tasktrackerbackend.service.UserService;
+import com.vadimistar.tasktrackerbackend.security.*;
+import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
+import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
+import com.vadimistar.tasktrackerbackend.security.details.UserDetailsServiceImpl;
+import com.vadimistar.tasktrackerbackend.security.user.*;
+import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
