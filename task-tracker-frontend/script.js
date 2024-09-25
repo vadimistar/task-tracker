@@ -219,7 +219,7 @@ $(function() {
             equalTo: 'Please enter the same password as above',
         },
     });
-    handleFormSubmit(registerForm, "/user", $('#register-modal'), $('#register-error'));
+    handleFormSubmit(registerForm, "/auth/register", $('#register-modal'), $('#register-error'));
 
     $("#log-out-button :button").click(function() {
         $.ajax({
