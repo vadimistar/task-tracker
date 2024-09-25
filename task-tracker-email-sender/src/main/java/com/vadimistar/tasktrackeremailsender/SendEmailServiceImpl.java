@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class EmailSendingServiceImpl implements EmailSendingService {
+public class SendEmailServiceImpl implements SendEmailService {
 
     private final JavaMailSender javaMailSender;
     private final EmailConfig emailConfig;
 
     @Override
-    public void sendEmail(EmailSendingTask task) {
+    public void sendEmail(SendEmailTask task) {
         log.info("Received task with email to '{}' and header '{}'", task.getDestinationEmail(), task.getHeader());
 
         SimpleMailMessage message = new SimpleMailMessage();

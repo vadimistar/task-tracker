@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EmailSendingController {
+public class SendEmailController {
 
-    private final EmailSendingService emailSendingService;
+    private final SendEmailService sendEmailService;
 
     @KafkaListener(topics = "EMAIL_SENDING_TASKS", groupId = "default")
-    void consume(EmailSendingTask task) {
-        emailSendingService.sendEmail(task);
+    void consume(SendEmailTask task) {
+        sendEmailService.sendEmail(task);
     }
 }
