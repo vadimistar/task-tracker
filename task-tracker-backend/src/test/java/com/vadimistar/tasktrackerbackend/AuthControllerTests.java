@@ -1,17 +1,13 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.vadimistar.tasktrackerbackend.security.*;
-import com.vadimistar.tasktrackerbackend.security.details.UserDetailsServiceImpl;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtConfig;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtServiceImpl;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,13 +53,13 @@ public class AuthControllerTests {
     }
 
     @Test
-    void authorizeUser_validRequest_returnsOk_setsAuthCookie() throws Exception {
-        AuthorizeUserDto request = AuthorizeUserDto.builder()
+    void loginUser_validRequest_returnsOk_setsAuthCookie() throws Exception {
+        LoginUserDto request = LoginUserDto.builder()
                 .email("admin@admin.com")
                 .password("admin")
                 .build();
 
-        when(authService.authorizeUser(request)).thenReturn(mockJwtTokenDto());
+        when(authService.loginUser(request)).thenReturn(mockJwtTokenDto());
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)

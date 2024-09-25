@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend.security;
 
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
-import com.vadimistar.tasktrackerbackend.security.user.AuthorizeUserDto;
+import com.vadimistar.tasktrackerbackend.security.user.LoginUserDto;
 import com.vadimistar.tasktrackerbackend.security.user.RegisterUserDto;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,9 +22,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authorizeUser(@Valid AuthorizeUserDto authorizeUserDto,
-                                           HttpServletResponse response) {
-        JwtTokenDto jwtTokenDto = authService.authorizeUser(authorizeUserDto);
+    public ResponseEntity<?> loginUser(@Valid LoginUserDto loginUserDto,
+                                       HttpServletResponse response) {
+        JwtTokenDto jwtTokenDto = authService.loginUser(loginUserDto);
         setTokenCookie(jwtTokenDto, response);
         return ResponseEntity.ok().build();
     }

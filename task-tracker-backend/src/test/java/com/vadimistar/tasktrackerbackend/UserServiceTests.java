@@ -93,11 +93,11 @@ public class UserServiceTests {
                 .build();
         authService.registerUser(registerUserDto);
 
-        AuthorizeUserDto authorizeUserDto = AuthorizeUserDto.builder()
+        LoginUserDto loginUserDto = LoginUserDto.builder()
                 .email("admin@admin.com")
                 .password("admin")
                 .build();
-        JwtTokenDto jwtTokenDto = authService.authorizeUser(authorizeUserDto);
+        JwtTokenDto jwtTokenDto = authService.loginUser(loginUserDto);
 
         Assertions.assertTrue(jwtService.isTokenValid(jwtTokenDto.getToken()));
     }

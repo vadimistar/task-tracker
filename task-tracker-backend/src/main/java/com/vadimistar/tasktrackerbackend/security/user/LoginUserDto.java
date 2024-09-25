@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AuthorizeUserDto {
+public class LoginUserDto {
 
     @NotBlank(message = "Email cannot be blank")
     private String email;

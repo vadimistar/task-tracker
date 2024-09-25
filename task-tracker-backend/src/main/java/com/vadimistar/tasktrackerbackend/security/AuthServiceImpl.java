@@ -25,9 +25,9 @@ public class AuthServiceImpl implements AuthService {
     private final EmailSendingService emailSendingService;
 
     @Override
-    public JwtTokenDto authorizeUser(AuthorizeUserDto authorizeUserDto) {
+    public JwtTokenDto loginUser(LoginUserDto loginUserDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authorizeUserDto.getEmail(), authorizeUserDto.getPassword())
+                new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         emailSendingService.sendEmail(emailSendingTask);
 
-        AuthorizeUserDto authorizeUserDto = userMapper.mapRegisterUserDtoToAuthorizeUserDto(registerUserDto);
-        return authorizeUser(authorizeUserDto);
+        LoginUserDto loginUserDto = userMapper.mapRegisterUserDtoToAuthorizeUserDto(registerUserDto);
+        return loginUser(loginUserDto);
     }
 }

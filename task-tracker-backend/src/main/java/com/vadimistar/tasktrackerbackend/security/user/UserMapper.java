@@ -9,7 +9,7 @@ public interface UserMapper {
 
     User mapRegisterUserDtoToUser(RegisterUserDto registerUserDto);
     CurrentUserDto mapUserToCurrentUserDto(User user);
-    AuthorizeUserDto mapRegisterUserDtoToAuthorizeUserDto(RegisterUserDto registerUserDto);
+    LoginUserDto mapRegisterUserDtoToAuthorizeUserDto(RegisterUserDto registerUserDto);
     UserDetailsImpl mapUserToUserDetailsImpl(User user);
     User mapUserDetailsImplToUser(UserDetailsImpl userDetailsImpl);
     CurrentUserDto mapUserDetailsImplToCurrentUserDto(UserDetailsImpl userDetails);
