@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
-import com.vadimistar.tasktrackerbackend.email.EmailSendingTaskDto;
+import com.vadimistar.tasktrackerbackend.email.EmailSendingTask;
 import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
+        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
                 .destinationEmail(registerUserDto.getEmail())
                 .header("Registration email")
                 .text("Welcome to our service!")

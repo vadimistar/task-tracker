@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EmailSendingTaskDto {
+public class EmailSendingTask {
 
     private String destinationEmail;
     private String header;

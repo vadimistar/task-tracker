@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class EmailSendingServiceImpl implements EmailSendingService {
 
-    private final KafkaTemplate<String, EmailSendingTaskDto> kafkaTemplate;
+    private final KafkaTemplate<String, EmailSendingTask> kafkaTemplate;
 
     @Override
-    public void sendEmail(EmailSendingTaskDto task) {
+    public void sendEmail(EmailSendingTask task) {
         log.info("Send task with email to '{}' and header '{}' to email sender", task.getDestinationEmail(), task.getHeader());
 
         kafkaTemplate.send("EMAIL_SENDING_TASKS", task);

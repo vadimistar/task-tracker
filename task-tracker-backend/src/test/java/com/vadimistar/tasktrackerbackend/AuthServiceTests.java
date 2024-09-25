@@ -1,7 +1,7 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
-import com.vadimistar.tasktrackerbackend.email.EmailSendingTaskDto;
+import com.vadimistar.tasktrackerbackend.email.EmailSendingTask;
 import com.vadimistar.tasktrackerbackend.security.auth.AuthService;
 import com.vadimistar.tasktrackerbackend.security.auth.LoginUserDto;
 import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
@@ -104,7 +104,7 @@ public class AuthServiceTests {
 
     @Test
     void registerUser_success_registerEmailSent() {
-        EmailSendingTaskDto emailSendingTask = EmailSendingTaskDto.builder()
+        EmailSendingTask emailSendingTask = EmailSendingTask.builder()
                 .destinationEmail("admin@admin.com")
                 .header("Registration email")
                 .text("Welcome to our service!")
