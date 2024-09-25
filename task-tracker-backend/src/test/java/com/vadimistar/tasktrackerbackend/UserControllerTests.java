@@ -1,10 +1,11 @@
 package com.vadimistar.tasktrackerbackend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vadimistar.tasktrackerbackend.config.CorsConfig;
 import com.vadimistar.tasktrackerbackend.config.WebSecurityConfig;
 import com.vadimistar.tasktrackerbackend.controller.UserController;
 import com.vadimistar.tasktrackerbackend.dto.*;
-import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.service.JwtService;
 import com.vadimistar.tasktrackerbackend.service.UserDetailsServiceImpl;
 import com.vadimistar.tasktrackerbackend.service.UserService;
@@ -85,24 +86,24 @@ public class UserControllerTests {
 
     @Test
     void getCurrentUser_tokenCookieIsSet_returnsOk() throws Exception {
-        User user = User.builder()
+        UserDetailsImpl userDetails = UserDetailsImpl.builder()
                 .id(1L)
                 .email("admin@admin.com")
                 .password("admin")
                 .build();
 
         when(userDetailsService.loadUserByUsername("admin@admin.com"))
-                .thenReturn(user);
+                .thenReturn(userDetails);
 
         CurrentUserDto response = CurrentUserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
+                .id(userDetails.getId())
+                .email(userDetails.getEmail())
                 .build();
 
-        when(userService.getCurrentUser(user)).thenReturn(response);
+        when(userService.getCurrentUser(userDetails)).thenReturn(response);
 
         when(jwtService.isTokenValid("TOKEN")).thenReturn(true);
-        when(jwtService.getEmailFromToken("TOKEN")).thenReturn(user.getEmail());
+        when(jwtService.getEmailFromToken("TOKEN")).thenReturn(userDetails.getEmail());
 
         mockMvc.perform(get("/api/user")
                         .cookie(new Cookie("authToken", "TOKEN")))

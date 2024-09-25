@@ -2,6 +2,7 @@ package com.vadimistar.tasktrackerbackend.service;
 
 import com.vadimistar.tasktrackerbackend.dto.*;
 import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.exception.UserAlreadyExistsException;
 import com.vadimistar.tasktrackerbackend.mapper.UserMapper;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CurrentUserDto getCurrentUser(User user) {
-        return userMapper.mapUserToCurrentUserDto(user);
+    public CurrentUserDto getCurrentUser(UserDetailsImpl userDetails) {
+        return userMapper.mapUserDetailsImplToCurrentUserDto(userDetails);
     }
 }

@@ -6,7 +6,9 @@ import com.vadimistar.tasktrackerbackend.dto.TaskDto;
 import com.vadimistar.tasktrackerbackend.dto.UpdateTaskDto;
 import com.vadimistar.tasktrackerbackend.entity.Task;
 import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.exception.TaskNotFoundException;
+import com.vadimistar.tasktrackerbackend.mapper.UserMapper;
 import com.vadimistar.tasktrackerbackend.repository.TaskRepository;
 import com.vadimistar.tasktrackerbackend.repository.UserRepository;
 import com.vadimistar.tasktrackerbackend.service.TaskService;
@@ -39,6 +41,9 @@ public class TaskServiceTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0");
 
@@ -58,7 +63,7 @@ public class TaskServiceTests {
 
     @Test
     public void getTasks_noTasks_returnsEmptyList() {
-        List<TaskDto> tasks = taskService.getTasks(mockUser());
+        List<TaskDto> tasks = taskService.getTasks(mockUserDetails());
 
         Assertions.assertEquals(0, tasks.size());
     }
@@ -71,7 +76,7 @@ public class TaskServiceTests {
                 .isCompleted(false)
                 .build();
 
-        TaskDto response = taskService.createTask(mockUser(), request);
+        TaskDto response = taskService.createTask(mockUserDetails(), request);
 
         Assertions.assertTrue(taskRepository.existsById(response.getId()));
 
@@ -90,7 +95,7 @@ public class TaskServiceTests {
                 .isCompleted(true)
                 .build();
 
-        TaskDto response = taskService.createTask(mockUser(), request);
+        TaskDto response = taskService.createTask(mockUserDetails(), request);
 
         Assertions.assertTrue(taskRepository.existsById(response.getId()));
 
@@ -108,22 +113,22 @@ public class TaskServiceTests {
                 .text("Text")
                 .build();
 
-        TaskDto response = taskService.createTask(mockUser(), request);
+        TaskDto response = taskService.createTask(mockUserDetails(), request);
 
         Assertions.assertEquals("Title", response.getTitle());
     }
 
     @Test
     public void updateTask_completeTask_updatesIsCompleted_completedAt() {
-        User user = mockUser();
-        Task task = mockTask(user, false);
+        UserDetailsImpl userDetails = mockUserDetails();
+        Task task = mockTask(userDetails, false);
 
         UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .isCompleted(true)
                 .build();
 
-        TaskDto response = taskService.updateTask(user, request);
+        TaskDto response = taskService.updateTask(userDetails, request);
 
         Assertions.assertEquals(true, response.getIsCompleted());
         Assertions.assertNotNull(response.getCompletedAt());
@@ -131,15 +136,15 @@ public class TaskServiceTests {
 
     @Test
     public void updateTask_makeTestNotCompleted_updatesIsCompleted_completedAt() {
-        User user = mockUser();
-        Task task = mockTask(user, true);
+        UserDetailsImpl userDetails = mockUserDetails();
+        Task task = mockTask(userDetails, true);
 
         UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .isCompleted(false)
                 .build();
 
-        TaskDto response = taskService.updateTask(user, request);
+        TaskDto response = taskService.updateTask(userDetails, request);
 
         Assertions.assertEquals(false, response.getIsCompleted());
         Assertions.assertNull(response.getCompletedAt());
@@ -147,31 +152,31 @@ public class TaskServiceTests {
 
     @Test
     public void updateTask_titleNotTrimmed_trimsTitle() {
-        User user = mockUser();
-        Task task = mockTask(user, false);
+        UserDetailsImpl userDetails = mockUserDetails();
+        Task task = mockTask(userDetails, false);
 
         UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(task.getId())
                 .title("    New title   ")
                 .build();
 
-        TaskDto response = taskService.updateTask(user, request);
+        TaskDto response = taskService.updateTask(userDetails, request);
 
         Assertions.assertEquals("New title", response.getTitle());
     }
 
     @Test
     public void updateTask_userNotOwnsTask_taskNotFound() {
-        User user1 = mockUser();
-        User user2 = mockUser2();
-        Task taskOfUser1 = mockTask(user1, false);
+        UserDetailsImpl userDetails1 = mockUserDetails();
+        UserDetailsImpl userDetails2 = mockUserDetails2();
+        Task taskOfUser1 = mockTask(userDetails1, false);
 
         UpdateTaskDto request = UpdateTaskDto.builder()
                 .id(taskOfUser1.getId())
                 .title("New title for task of user 1")
                 .build();
 
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(user2, request));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(userDetails2, request));
     }
 
     @Test
@@ -181,32 +186,32 @@ public class TaskServiceTests {
                 .title("Title")
                 .build();
 
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(mockUser(), request));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.updateTask(mockUserDetails(), request));
     }
 
     @Test
     public void deleteTask_taskExists_success() {
-        User user = mockUser();
-        Task task = mockTask(user, false);
+        UserDetailsImpl userDetails = mockUserDetails();
+        Task task = mockTask(userDetails, false);
 
         DeleteTaskDto request = DeleteTaskDto.builder()
                 .id(task.getId())
                 .build();
 
-        Assertions.assertDoesNotThrow(() -> taskService.deleteTask(user, request));
+        Assertions.assertDoesNotThrow(() -> taskService.deleteTask(userDetails, request));
     }
 
     @Test
     public void deleteTask_userNotOwnsTask_taskNotFound() {
-        User user1 = mockUser();
-        User user2 = mockUser2();
-        Task taskOfUser1 = mockTask(user1, false);
+        UserDetailsImpl userDetails1 = mockUserDetails();
+        UserDetailsImpl userDetails2 = mockUserDetails2();
+        Task taskOfUser1 = mockTask(userDetails1, false);
 
         DeleteTaskDto request = DeleteTaskDto.builder()
                 .id(taskOfUser1.getId())
                 .build();
 
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(user2, request));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(userDetails2, request));
     }
 
     @Test
@@ -215,31 +220,34 @@ public class TaskServiceTests {
                 .id(Long.MAX_VALUE)
                 .build();
 
-        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(mockUser(), request));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(mockUserDetails(), request));
     }
 
-    private User mockUser() {
-        return userRepository.saveAndFlush(
+    private UserDetailsImpl mockUserDetails() {
+        User user = userRepository.saveAndFlush(
                 User.builder()
                         .email("admin@admin.com")
                         .password("admin")
                         .build());
+        return userMapper.mapUserToUserDetailsImpl(user);
     }
 
-    private User mockUser2() {
-        return userRepository.saveAndFlush(
+    private UserDetailsImpl mockUserDetails2() {
+        User user = userRepository.saveAndFlush(
                 User.builder()
                         .email("admin2@admin.com")
                         .password("admin")
                         .build());
+        return userMapper.mapUserToUserDetailsImpl(user);
     }
 
-    private Task mockTask(User user, boolean isCompleted) {
+    private Task mockTask(UserDetailsImpl userDetails, boolean isCompleted) {
+        User owner = userRepository.findById(userDetails.getId()).get();
         Task task = Task.builder()
                 .title("Title")
                 .text("Text")
                 .isCompleted(isCompleted)
-                .owner(user)
+                .owner(owner)
                 .build();
         if (isCompleted) {
             task.setCompletedAt(LocalDateTime.now());

@@ -5,6 +5,7 @@ import com.vadimistar.tasktrackerbackend.dto.CurrentUserDto;
 import com.vadimistar.tasktrackerbackend.dto.RegisterUserDto;
 import com.vadimistar.tasktrackerbackend.dto.JwtTokenDto;
 import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public CurrentUserDto getCurrentUser(@AuthenticationPrincipal User user) {
-        return userService.getCurrentUser(user);
+    public CurrentUserDto getCurrentUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.getCurrentUser(userDetails);
     }
 
     @PostMapping("/auth/login")

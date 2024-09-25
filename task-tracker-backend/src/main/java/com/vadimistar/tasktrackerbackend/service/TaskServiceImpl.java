@@ -6,8 +6,10 @@ import com.vadimistar.tasktrackerbackend.dto.TaskDto;
 import com.vadimistar.tasktrackerbackend.dto.UpdateTaskDto;
 import com.vadimistar.tasktrackerbackend.entity.Task;
 import com.vadimistar.tasktrackerbackend.entity.User;
+import com.vadimistar.tasktrackerbackend.entity.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.exception.TaskNotFoundException;
 import com.vadimistar.tasktrackerbackend.mapper.TaskMapper;
+import com.vadimistar.tasktrackerbackend.mapper.UserMapper;
 import com.vadimistar.tasktrackerbackend.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +24,23 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+    private final UserMapper userMapper;
 
     @Override
-    public List<TaskDto> getTasks(User user) {
-        return user.getTasks().stream().map(taskMapper::mapTaskToTaskDto).toList();
+    public List<TaskDto> getTasks(UserDetailsImpl userDetails) {
+        return taskRepository.findByOwnerId(userDetails.getId())
+                .stream()
+                .map(taskMapper::mapTaskToTaskDto)
+                .toList();
     }
 
     @Override
     @Transactional
-    public TaskDto createTask(User user, CreateTaskDto taskDto) {
+    public TaskDto createTask(UserDetailsImpl userDetails, CreateTaskDto taskDto) {
         Task task = taskMapper.mapCreateTaskDtoToTask(taskDto);
         task.setTitle(task.getTitle().trim());
-        task.setOwner(user);
+        User owner = userMapper.mapUserDetailsImplToUser(userDetails);
+        task.setOwner(owner);
         if (task.getIsCompleted() == null) {
             task.setIsCompleted(false);
         }
@@ -46,8 +53,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TaskDto updateTask(User user, UpdateTaskDto taskDto) {
-        Task task = taskRepository.findByIdAndOwnerId(taskDto.getId(), user.getId())
+    public TaskDto updateTask(UserDetailsImpl userDetails, UpdateTaskDto taskDto) {
+        Task task = taskRepository.findByIdAndOwnerId(taskDto.getId(), userDetails.getId())
                 .orElseThrow(() -> new TaskNotFoundException("Task with this id is not found"));
         boolean isJustCompleted = !task.getIsCompleted() &&
                 (taskDto.getIsCompleted() != null && taskDto.getIsCompleted());
@@ -65,8 +72,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(User user, DeleteTaskDto taskDto) {
-        if (!taskRepository.existsByIdAndOwnerId(taskDto.getId(), user.getId())) {
+    public void deleteTask(UserDetailsImpl userDetails, DeleteTaskDto taskDto) {
+        if (!taskRepository.existsByIdAndOwnerId(taskDto.getId(), userDetails.getId())) {
             throw new TaskNotFoundException("Task with this id is not found");
         }
         taskRepository.deleteById(taskDto.getId());
