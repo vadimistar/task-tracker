@@ -1,28 +1,22 @@
 package com.vadimistar.tasktrackerbackend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vadimistar.tasktrackerbackend.security.*;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsServiceImpl;
 import com.vadimistar.tasktrackerbackend.security.user.*;
-import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.Duration;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -34,9 +28,6 @@ public class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private UserService userService;
 
@@ -45,40 +36,6 @@ public class UserControllerTests {
 
     @MockBean
     private JwtService jwtService;
-
-    @Test
-    void registerUser_validRequest_returnsOk_setsAuthCookie() throws Exception {
-        RegisterUserDto request = RegisterUserDto.builder()
-                .email("admin@admin.com")
-                .password("admin")
-                .build();
-
-        when(userService.registerUser(request)).thenReturn(mockJwtTokenDto());
-
-        mockMvc.perform(post("/api/user")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                        .param("email", request.getEmail())
-                        .param("password", request.getPassword()))
-                .andExpect(status().isOk())
-                .andExpect(cookie().exists("authToken"));
-    }
-
-    @Test
-    void authorizeUser_validRequest_returnsOk_setsAuthCookie() throws Exception {
-        AuthorizeUserDto request = AuthorizeUserDto.builder()
-                .email("admin@admin.com")
-                .password("admin")
-                .build();
-
-        when(userService.authorizeUser(request)).thenReturn(mockJwtTokenDto());
-
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                        .param("email", request.getEmail())
-                        .param("password", request.getPassword()))
-                .andExpect(status().isOk())
-                .andExpect(cookie().exists("authToken"));
-    }
 
     @Test
     void getCurrentUser_tokenCookieIsSet_returnsOk() throws Exception {
@@ -110,12 +67,5 @@ public class UserControllerTests {
     void getCurrentUser_notAuthorized_returns401() throws Exception {
         mockMvc.perform(get("/api/user"))
                 .andExpect(status().isUnauthorized());
-    }
-
-    private JwtTokenDto mockJwtTokenDto() {
-        return JwtTokenDto.builder()
-                .token("TOKEN")
-                .expiresIn(Duration.ofSeconds(60))
-                .build();
     }
 }

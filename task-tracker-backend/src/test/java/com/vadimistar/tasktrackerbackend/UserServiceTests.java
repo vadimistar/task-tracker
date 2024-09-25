@@ -2,6 +2,7 @@ package com.vadimistar.tasktrackerbackend;
 
 import com.vadimistar.tasktrackerbackend.email.EmailSendingService;
 import com.vadimistar.tasktrackerbackend.email.EmailSendingTaskDto;
+import com.vadimistar.tasktrackerbackend.security.AuthService;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtService;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import com.vadimistar.tasktrackerbackend.security.jwt.JwtTokenDto;
@@ -27,6 +28,9 @@ public class UserServiceTests {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private UserRepository userRepository;
@@ -60,7 +64,7 @@ public class UserServiceTests {
                 .password("admin")
                 .build();
 
-        JwtTokenDto jwtTokenDto = userService.registerUser(registerUserDto);
+        JwtTokenDto jwtTokenDto = authService.registerUser(registerUserDto);
         String token = jwtTokenDto.getToken();
 
         Assertions.assertTrue(userRepository.existsByEmail("admin@admin.com"));
@@ -76,9 +80,9 @@ public class UserServiceTests {
                 .password("admin")
                 .build();
 
-        userService.registerUser(registerUserDto);
+        authService.registerUser(registerUserDto);
 
-        Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.registerUser(registerUserDto));
+        Assertions.assertThrows(UserAlreadyExistsException.class, () -> authService.registerUser(registerUserDto));
     }
 
     @Test
@@ -87,13 +91,13 @@ public class UserServiceTests {
                 .email("admin@admin.com")
                 .password("admin")
                 .build();
-        userService.registerUser(registerUserDto);
+        authService.registerUser(registerUserDto);
 
         AuthorizeUserDto authorizeUserDto = AuthorizeUserDto.builder()
                 .email("admin@admin.com")
                 .password("admin")
                 .build();
-        JwtTokenDto jwtTokenDto = userService.authorizeUser(authorizeUserDto);
+        JwtTokenDto jwtTokenDto = authService.authorizeUser(authorizeUserDto);
 
         Assertions.assertTrue(jwtService.isTokenValid(jwtTokenDto.getToken()));
     }
@@ -113,6 +117,6 @@ public class UserServiceTests {
                 .password("admin")
                 .build();
 
-        userService.registerUser(registerUserDto);
+        authService.registerUser(registerUserDto);
     }
 }

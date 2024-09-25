@@ -1,12 +1,12 @@
 package com.vadimistar.tasktrackerbackend.security.jwt;
 
-import com.vadimistar.tasktrackerbackend.security.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -21,11 +21,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public JwtTokenDto createToken(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + jwtConfig.getExpiresIn().toMillis());
         String token = Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiresAt)
                 .signWith(getKey(), SignatureAlgorithm.HS256)
