@@ -1,13 +1,17 @@
 package com.vadimistar.tasktrackerscheduler.email;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix = "task-tracker.report-email")
 @Getter
+@Setter
 public class ReportEmailConfig {
 
-    @Value("${task-tracker.report-email.subject}")
     private String subject;
+    private int notCompletedTasksLimit;
+    private int todayCompletedTasksLimit;
 }

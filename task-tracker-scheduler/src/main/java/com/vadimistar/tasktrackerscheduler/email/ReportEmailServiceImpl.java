@@ -25,7 +25,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
 
         String emailText = createNotCompletedTasksMessage(tasks).orElse("")
                 + "\n"
-                + createCompletedTasksMessage(tasks).orElse("");
+                + createTodayCompletedTasksMessage(tasks).orElse("");
 
         if (emailText.isBlank()) {
             return;
@@ -40,7 +40,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         kafkaTemplate.send("EMAIL_SENDING_TASKS", task);
     }
 
-    private static Optional<String> createNotCompletedTasksMessage(List<TaskDto> tasks) {
+    private Optional<String> createNotCompletedTasksMessage(List<TaskDto> tasks) {
         List<TaskDto> notCompletedTasks = tasks.stream()
                 .filter(task -> !task.getIsCompleted())
                 .toList();
@@ -52,14 +52,13 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         StringBuilder result = new StringBuilder();
         result.append(String.format("You have %d not completed tasks:\n\n", tasks.size()));
 
-        tasks.stream().limit(NOT_COMPLETED_TASKS_LIMIT).forEach(task -> {
-            result.append(" * ").append(task.getTitle()).append("\n");
-        });
+        tasks.stream().limit(reportEmailConfig.getNotCompletedTasksLimit())
+                .forEach(task -> result.append(" * ").append(task.getTitle()).append("\n"));
 
         return Optional.of(result.toString());
     }
 
-    private static Optional<String> createCompletedTasksMessage(List<TaskDto> tasks) {
+    private Optional<String> createTodayCompletedTasksMessage(List<TaskDto> tasks) {
         List<TaskDto> tasksCompletedLastDay = getTasksCompletedLastDay(tasks);
 
         if (tasksCompletedLastDay.isEmpty()) {
@@ -69,9 +68,8 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         StringBuilder result = new StringBuilder();
         result.append(String.format("Today you have completed %d tasks:\n\n", tasks.size()));
 
-        tasks.stream().limit(COMPLETED_TASKS_LIMIT).forEach(task -> {
-            result.append(" * ").append(task.getTitle()).append("\n");
-        });
+        tasks.stream().limit(reportEmailConfig.getTodayCompletedTasksLimit())
+                .forEach(task -> result.append(" * ").append(task.getTitle()).append("\n"));
 
         return Optional.of(result.toString());
     }
@@ -84,7 +82,4 @@ public class ReportEmailServiceImpl implements ReportEmailService {
                 .filter(task -> (task.getIsCompleted()) && task.getCompletedAt().isAfter(dayBefore))
                 .toList();
     }
-
-    private static final int NOT_COMPLETED_TASKS_LIMIT = 5;
-    private static final int COMPLETED_TASKS_LIMIT = 10;
 }
