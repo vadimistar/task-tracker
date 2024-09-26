@@ -3,7 +3,6 @@ package com.vadimistar.tasktrackerscheduler;
 import com.vadimistar.tasktrackerscheduler.email.ReportEmailService;
 import com.vadimistar.tasktrackerscheduler.user.UserDto;
 import com.vadimistar.tasktrackerscheduler.user.UserService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,11 +17,6 @@ public class SendReportsScheduler {
 
     private final UserService userService;
     private final ReportEmailService reportEmailService;
-
-    @PostConstruct
-    public void onStartup() {
-        sendReports();
-    }
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void sendReports() {
