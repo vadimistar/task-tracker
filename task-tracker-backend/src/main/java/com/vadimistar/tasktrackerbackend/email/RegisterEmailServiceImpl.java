@@ -1,6 +1,5 @@
 package com.vadimistar.tasktrackerbackend.email;
 
-import com.vadimistar.tasktrackerbackend.security.auth.RegisterEmailConfig;
 import com.vadimistar.tasktrackerbackend.security.auth.RegisterUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

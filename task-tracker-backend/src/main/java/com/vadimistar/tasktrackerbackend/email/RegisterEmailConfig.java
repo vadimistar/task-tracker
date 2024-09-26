@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerbackend.security.auth;
+package com.vadimistar.tasktrackerbackend.email;
 
 import lombok.Getter;
 import lombok.Setter;
