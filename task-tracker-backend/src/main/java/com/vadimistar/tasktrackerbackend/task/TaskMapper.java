@@ -9,7 +9,6 @@ import org.mapstruct.*;
 public interface TaskMapper {
 
     TaskDto mapTaskToTaskDto(Task task);
-    Task mapTaskDtoToTask(TaskDto taskDto);
     Task mapCreateTaskDtoToTask(CreateTaskDto createTaskDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

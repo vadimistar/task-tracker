@@ -22,14 +22,17 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public JwtTokenDto createToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + jwtConfig.getExpiresIn().toMillis());
+
         String token = Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiresAt)
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+
         return JwtTokenDto.builder()
                 .token(token)
                 .expiresIn(jwtConfig.getExpiresIn())

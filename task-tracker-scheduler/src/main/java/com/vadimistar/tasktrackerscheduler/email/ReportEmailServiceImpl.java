@@ -40,7 +40,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         kafkaTemplate.send("EMAIL_SENDING_TASKS", task);
     }
 
-    private Optional<String> createNotCompletedTasksMessage(List<TaskDto> tasks) {
+    private static Optional<String> createNotCompletedTasksMessage(List<TaskDto> tasks) {
         List<TaskDto> notCompletedTasks = tasks.stream()
                 .filter(task -> !task.getIsCompleted())
                 .toList();
@@ -59,7 +59,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         return Optional.of(result.toString());
     }
 
-    private Optional<String> createCompletedTasksMessage(List<TaskDto> tasks) {
+    private static Optional<String> createCompletedTasksMessage(List<TaskDto> tasks) {
         List<TaskDto> tasksCompletedLastDay = getTasksCompletedLastDay(tasks);
 
         if (tasksCompletedLastDay.isEmpty()) {

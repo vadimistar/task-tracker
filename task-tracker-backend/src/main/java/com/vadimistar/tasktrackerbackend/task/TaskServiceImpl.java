@@ -35,14 +35,18 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto createTask(UserDetailsImpl userDetails, CreateTaskDto taskDto) {
         Task task = taskMapper.mapCreateTaskDtoToTask(taskDto);
         task.setTitle(task.getTitle().trim());
+
         User owner = userDetailsMapper.mapUserDetailsImplToUser(userDetails);
         task.setOwner(owner);
+
         if (task.getIsCompleted() == null) {
             task.setIsCompleted(false);
         }
+
         if (task.getIsCompleted()) {
             task.setCompletedAt(LocalDateTime.now());
         }
+
         Task savedTask = taskRepository.saveAndFlush(task);
         return taskMapper.mapTaskToTaskDto(savedTask);
     }
@@ -52,16 +56,21 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto updateTask(UserDetailsImpl userDetails, UpdateTaskDto taskDto) {
         Task task = taskRepository.findByIdAndOwnerId(taskDto.getId(), userDetails.getId())
                 .orElseThrow(() -> new TaskNotFoundException("Task with this id is not found"));
+
         boolean isJustCompleted = !task.getIsCompleted() &&
                 (taskDto.getIsCompleted() != null && taskDto.getIsCompleted());
+
         taskMapper.mapUpdateTaskDtoToTask(taskDto, task);
         task.setTitle(task.getTitle().trim());
+
         if (isJustCompleted) {
             task.setCompletedAt(LocalDateTime.now());
         }
+
         if (taskDto.getIsCompleted() != null && !taskDto.getIsCompleted()) {
             task.setCompletedAt(null);
         }
+
         taskRepository.saveAndFlush(task);
         return taskMapper.mapTaskToTaskDto(task);
     }
@@ -72,6 +81,7 @@ public class TaskServiceImpl implements TaskService {
         if (!taskRepository.existsByIdAndOwnerId(taskDto.getId(), userDetails.getId())) {
             throw new TaskNotFoundException("Task with this id is not found");
         }
+
         taskRepository.deleteById(taskDto.getId());
     }
 }
