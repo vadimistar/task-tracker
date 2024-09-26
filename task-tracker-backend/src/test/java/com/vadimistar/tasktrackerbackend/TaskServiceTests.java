@@ -1,5 +1,6 @@
 package com.vadimistar.tasktrackerbackend;
 
+import com.vadimistar.tasktrackerbackend.security.details.UserDetailsMapper;
 import com.vadimistar.tasktrackerbackend.task.dto.CreateTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.DeleteTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.TaskDto;
@@ -8,7 +9,6 @@ import com.vadimistar.tasktrackerbackend.task.Task;
 import com.vadimistar.tasktrackerbackend.security.user.User;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
 import com.vadimistar.tasktrackerbackend.task.TaskNotFoundException;
-import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.task.TaskRepository;
 import com.vadimistar.tasktrackerbackend.security.user.UserRepository;
 import com.vadimistar.tasktrackerbackend.task.TaskService;
@@ -42,7 +42,7 @@ public class TaskServiceTests {
     private UserRepository userRepository;
 
     @Autowired
-    private UserMapper userMapper;
+    private UserDetailsMapper userDetailsMapper;
 
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0");
@@ -229,7 +229,7 @@ public class TaskServiceTests {
                         .email("admin@admin.com")
                         .password("admin")
                         .build());
-        return userMapper.mapUserToUserDetailsImpl(user);
+        return userDetailsMapper.mapUserToUserDetailsImpl(user);
     }
 
     private UserDetailsImpl mockUserDetails2() {
@@ -238,7 +238,7 @@ public class TaskServiceTests {
                         .email("admin2@admin.com")
                         .password("admin")
                         .build());
-        return userMapper.mapUserToUserDetailsImpl(user);
+        return userDetailsMapper.mapUserToUserDetailsImpl(user);
     }
 
     private Task mockTask(UserDetailsImpl userDetails, boolean isCompleted) {

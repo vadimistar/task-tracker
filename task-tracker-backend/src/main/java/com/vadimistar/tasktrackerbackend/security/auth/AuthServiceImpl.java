@@ -1,7 +1,6 @@
 package com.vadimistar.tasktrackerbackend.security.auth;
 
 import com.vadimistar.tasktrackerbackend.email.RegisterEmailService;
-import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final AuthMapper authMapper;
     private final PasswordEncoder passwordEncoder;
     private final RegisterEmailService registerEmailService;
 
@@ -39,13 +38,13 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("User with this email already exists");
         }
 
-        User user = userMapper.mapRegisterUserDtoToUser(registerUserDto);
+        User user = authMapper.mapRegisterUserDtoToUser(registerUserDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         registerEmailService.sendEmail(registerUserDto);
 
-        LoginUserDto loginUserDto = userMapper.mapRegisterUserDtoToLoginUserDto(registerUserDto);
+        LoginUserDto loginUserDto = authMapper.mapRegisterUserDtoToLoginUserDto(registerUserDto);
         return loginUser(loginUserDto);
     }
 }

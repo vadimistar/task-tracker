@@ -1,8 +1,8 @@
 package com.vadimistar.tasktrackerbackend.task;
 
+import com.vadimistar.tasktrackerbackend.security.details.UserDetailsMapper;
 import com.vadimistar.tasktrackerbackend.security.user.User;
 import com.vadimistar.tasktrackerbackend.security.details.UserDetailsImpl;
-import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.task.dto.CreateTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.DeleteTaskDto;
 import com.vadimistar.tasktrackerbackend.task.dto.TaskDto;
@@ -20,7 +20,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
-    private final UserMapper userMapper;
+    private final UserDetailsMapper userDetailsMapper;
 
     @Override
     public List<TaskDto> getTasks(UserDetailsImpl userDetails) {
@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto createTask(UserDetailsImpl userDetails, CreateTaskDto taskDto) {
         Task task = taskMapper.mapCreateTaskDtoToTask(taskDto);
         task.setTitle(task.getTitle().trim());
-        User owner = userMapper.mapUserDetailsImplToUser(userDetails);
+        User owner = userDetailsMapper.mapUserDetailsImplToUser(userDetails);
         task.setOwner(owner);
         if (task.getIsCompleted() == null) {
             task.setIsCompleted(false);

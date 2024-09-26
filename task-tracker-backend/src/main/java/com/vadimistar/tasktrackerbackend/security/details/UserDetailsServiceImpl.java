@@ -1,7 +1,6 @@
 package com.vadimistar.tasktrackerbackend.security.details;
 
 import com.vadimistar.tasktrackerbackend.security.user.User;
-import com.vadimistar.tasktrackerbackend.security.UserMapper;
 import com.vadimistar.tasktrackerbackend.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +13,12 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserDetailsMapper userDetailsMapper;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with this email is not found: " + email));
-        return userMapper.mapUserToUserDetailsImpl(user);
+        return userDetailsMapper.mapUserToUserDetailsImpl(user);
     }
 }
