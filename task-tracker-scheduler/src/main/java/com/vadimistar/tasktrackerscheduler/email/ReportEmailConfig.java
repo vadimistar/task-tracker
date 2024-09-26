@@ -1,4 +1,4 @@
-package com.vadimistar.tasktrackerscheduler;
+package com.vadimistar.tasktrackerscheduler.email;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
