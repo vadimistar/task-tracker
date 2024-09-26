@@ -13,5 +13,5 @@ public interface TaskService {
     List<TaskDto> getTasks(UserDetailsImpl userDetails);
     TaskDto createTask(UserDetailsImpl userDetails, CreateTaskDto taskDto);
     TaskDto updateTask(UserDetailsImpl userDetails, UpdateTaskDto taskDto);
-    void deleteTask(UserDetailsImpl userDetails, DeleteTaskDto id);
+    void deleteTask(UserDetailsImpl userDetails, DeleteTaskDto taskDto);
 }
