@@ -3,6 +3,7 @@ package com.vadimistar.tasktrackerbackend.security.auth;
 import com.vadimistar.tasktrackerbackend.email.RegisterEmailService;
 import com.vadimistar.tasktrackerbackend.security.jwt.*;
 import com.vadimistar.tasktrackerbackend.security.user.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public JwtTokenDto registerUser(RegisterUserDto registerUserDto) {
         if (userRepository.existsByEmail(registerUserDto.getEmail())) {
             throw new UserAlreadyExistsException("User with this email already exists");
@@ -40,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = authMapper.mapRegisterUserDtoToUser(registerUserDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
 
         registerEmailService.sendEmail(registerUserDto);
 
