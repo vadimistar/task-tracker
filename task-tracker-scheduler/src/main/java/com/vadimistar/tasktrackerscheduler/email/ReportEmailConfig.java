@@ -12,6 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class ReportEmailConfig {
 
     private String subject;
-    private int notCompletedTasksLimit;
+    private int activeTasksLimit;
     private int todayCompletedTasksLimit;
 }

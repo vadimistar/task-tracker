@@ -23,7 +23,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
     public void sendEmail(UserDto userDto) {
         List<TaskDto> tasks = userDto.getTasks();
 
-        String emailText = createNotCompletedTasksMessage(tasks).orElse("")
+        String emailText = createActiveTasksMessage(tasks).orElse("")
                 + "\n"
                 + createTodayCompletedTasksMessage(tasks).orElse("");
 
@@ -40,19 +40,19 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         kafkaTemplate.send("EMAIL_SENDING_TASKS", task);
     }
 
-    private Optional<String> createNotCompletedTasksMessage(List<TaskDto> tasks) {
-        List<TaskDto> notCompletedTasks = tasks.stream()
+    private Optional<String> createActiveTasksMessage(List<TaskDto> tasks) {
+        List<TaskDto> activeTasks = tasks.stream()
                 .filter(task -> !task.getIsCompleted())
                 .toList();
 
-        if (notCompletedTasks.isEmpty()) {
+        if (activeTasks.isEmpty()) {
             return Optional.empty();
         }
 
         StringBuilder result = new StringBuilder();
-        result.append(String.format("You have %d not completed tasks:\n\n", tasks.size()));
+        result.append(String.format("You have %d active tasks:\n\n", tasks.size()));
 
-        tasks.stream().limit(reportEmailConfig.getNotCompletedTasksLimit())
+        tasks.stream().limit(reportEmailConfig.getActiveTasksLimit())
                 .forEach(task -> result.append(" * ").append(task.getTitle()).append("\n"));
 
         return Optional.of(result.toString());
