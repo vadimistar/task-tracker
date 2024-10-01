@@ -3,7 +3,7 @@ WORKDIR /usr/app
 COPY . .
 RUN gradle build -x test
 
-FROM openjdk:17-oracle
+FROM openjdk:17-slim
 WORKDIR /usr/app
 COPY --from=BUILD '/usr/app' .
 EXPOSE 8081
