@@ -18,7 +18,7 @@ public class SendReportsScheduler {
     private final UserService userService;
     private final ReportEmailService reportEmailService;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "${task-tracker.report-cron}")
     public void sendReports() {
         List<UserDto> users = userService.getAllUsers();
 
