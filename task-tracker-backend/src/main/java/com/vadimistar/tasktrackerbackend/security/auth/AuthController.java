@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,28 +19,25 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid LoginUserDto loginUserDto,
+    public void loginUser(@Valid LoginUserDto loginUserDto,
                                        HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = authService.loginUser(loginUserDto);
         setTokenCookie(jwtTokenDto, response);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid RegisterUserDto registerUserDto,
+    public void registerUser(@Valid RegisterUserDto registerUserDto,
                                           HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = authService.registerUser(registerUserDto);
         setTokenCookie(jwtTokenDto, response);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(HttpServletResponse response) {
+    public void logoutUser(HttpServletResponse response) {
         setTokenCookie(JwtTokenDto.builder()
                 .token("")
                 .expiresIn(Duration.ZERO)
                 .build(), response);
-        return ResponseEntity.ok().build();
     }
 
     private static void setTokenCookie(JwtTokenDto jwtTokenDto, HttpServletResponse response) {
