@@ -1,7 +1,6 @@
 const DEBOUNCE_TIME = 500;
+const API_URL = "http://localhost:8080/api";
 $(function() {
-    const API_URL = 'http://localhost:8080/api';
-
     function appendErrorToForm(error, element) {
         let errorDiv = $(`
             <div class="form-group mt-3">
