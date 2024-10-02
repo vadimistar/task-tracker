@@ -13,9 +13,12 @@ services:
       JWT_SECRET: '${JWT_SECRET}'
       CORS_ALLOWED_ORIGINS: '${CORS_ALLOWED_ORIGINS}'
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
 
   task-tracker-frontend:
     build: './task-tracker-frontend'
@@ -68,7 +71,10 @@ services:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
     volumes:
       - db:/var/lib/mysql
-      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p$${DB_PASSWORD}"]
+      timeout: 10s
+      retries: 20
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.7.1
