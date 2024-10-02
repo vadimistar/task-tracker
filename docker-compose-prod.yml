@@ -51,7 +51,7 @@ services:
       DB_PASSWORD: '${DB_PASSWORD}'
       REPORT_CRON: '${REPORT_CRON}'
     depends_on:
-      - task-tracker-backend
+      - task-tracker-api
       - kafka
       - zookeeper
 
