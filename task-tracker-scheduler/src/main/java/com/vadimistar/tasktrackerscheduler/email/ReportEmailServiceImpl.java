@@ -52,7 +52,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         StringBuilder result = new StringBuilder();
         result.append(String.format("You have %d active tasks:\n\n", tasks.size()));
 
-        tasks.stream().limit(reportEmailConfig.getActiveTasksLimit())
+        activeTasks.stream().limit(reportEmailConfig.getActiveTasksLimit())
                 .forEach(task -> result.append(" * ").append(task.getTitle()).append("\n"));
 
         return Optional.of(result.toString());
@@ -68,7 +68,7 @@ public class ReportEmailServiceImpl implements ReportEmailService {
         StringBuilder result = new StringBuilder();
         result.append(String.format("Today you have completed %d tasks:\n\n", tasks.size()));
 
-        tasks.stream().limit(reportEmailConfig.getTodayCompletedTasksLimit())
+        tasksCompletedLastDay.stream().limit(reportEmailConfig.getTodayCompletedTasksLimit())
                 .forEach(task -> result.append(" * ").append(task.getTitle()).append("\n"));
 
         return Optional.of(result.toString());
