@@ -68,6 +68,7 @@ services:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
     volumes:
       - db:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.7.1
