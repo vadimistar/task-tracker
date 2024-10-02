@@ -11,11 +11,14 @@ services:
       DB_USER: 'admin'
       DB_PASSWORD: 'admin'
       JWT_SECRET: 'YmZkamxuZHZkZnZmZXdrcndsa3J3bmtsd3hjMTI4MW5zZGZzZGY'
-      CORS_ALLOWED_ORIGINS: 'http://localhost:80'
+      CORS_ALLOWED_ORIGINS: 'http://localhost/'
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
 
   task-tracker-frontend:
     build: './task-tracker-frontend'
@@ -68,6 +71,10 @@ services:
       MYSQL_ROOT_PASSWORD: 'admin'
     volumes:
       - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", 'admin', '-padmin']
+      timeout: 10s
+      retries: 20
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.7.1
