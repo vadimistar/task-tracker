@@ -1,8 +1,8 @@
 version: '3.1'
 
 services:
-  task-tracker-backend:
-    build: './task-tracker-backend'
+  task-tracker-api:
+    build: './task-tracker-api'
     restart: always
     ports:
       - '8080:8080'
